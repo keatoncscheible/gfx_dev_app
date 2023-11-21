@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Open Gfx Dev App",
+            "type": "shell",
+            "command": ".venv\\Scripts\\python.exe",
+            "args": [
+                "app\\gfx_dev_app.py"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Build and Open Gfx Dev App",
+            "type": "shell",
+            "command": ".venv\\Scripts\\python.exe",
+            "args": [
+                "app\\tools\\build_and_open_app.py"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Compile Gfx Dev App Ui Files",
+            "type": "shell",
+            "command": ".venv\\Scripts\\python.exe",
+            "args": [
+                "app\\tools\\compile_ui_files.py"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+    ]
+}

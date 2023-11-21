@@ -1,0 +1,54 @@
+
+KnobWidget {
+    background-color: #464646; 
+}
+
+KnobWidget:groove {
+    background: transparent;
+}
+
+KnobWidget:handle {
+    background: qradialgradient(
+        cx: 0.5, cy: 0.5,
+        fx: 0.5, fy: 0.5,
+        radius: 0.9,
+        stop: 0.0 silver, 
+        stop: 0.5 #a0a0a0, 
+        stop: 1.0 #707070 
+    );
+    border: 1px solid #5c5c5c;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+FootswitchWidget {
+    width: 40px;
+    height: 40px;
+    border-radius: 25px;
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 rgba(255, 255, 255, 255), stop:1 rgba(87, 87, 87, 255));
+    border: 3px solid #cccccc;
+    padding: 5px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+FootswitchWidget:checked {
+    border: 3px solid #bd68cfff;
+}
+
+FootswitchWidget:hover {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 rgba(255, 255, 255, 255), stop:1 rgba(48, 48, 160, 255));
+}
+
+FootswitchWidget:pressed {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
+                                      stop:0 rgba(100, 100, 100, 255), stop:1 rgba(87, 87, 87, 255));
+}
+
+PedalWidget {
+    border-radius: 15px;
+}

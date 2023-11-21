@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Gfx Dev App",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/app/gfx_dev_app.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
