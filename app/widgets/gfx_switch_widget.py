@@ -25,6 +25,8 @@ class GfxSwitchWidget(QWidget, Ui_GfxSwitchWidget):
 
     def gfx_switch_name_changed(self, new_name: str):
         old_name = self.name
+        if old_name == new_name:
+            return
         gfx_dev_log.debug(f"Switch name changed from {old_name} to {new_name}")
         self.name = new_name
         self.switch_name_changed.emit(old_name, new_name)

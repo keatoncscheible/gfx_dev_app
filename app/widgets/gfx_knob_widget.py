@@ -26,6 +26,8 @@ class GfxKnobWidget(QWidget, Ui_GfxKnobWidget):
 
     def gfx_knob_name_changed(self, new_name: str):
         old_name = self.name
+        if old_name == new_name:
+            return
         gfx_dev_log.debug(f"Knob name changed from {old_name} to {new_name}")
         self.name = new_name
         self.knob_name_changed.emit(old_name, new_name)
