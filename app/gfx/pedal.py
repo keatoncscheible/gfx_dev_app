@@ -56,6 +56,9 @@ class GfxPedal:
 
         cls.pedal_folder = pedal_folder
         cls.variants_folder = pedal_folder / "variants"
+        cls.variants = [
+            variant_file.stem for variant_file in cls.variants_folder.glob("*.py")
+        ]
         cls.pedal_updated_observers = []
         cls.variant_updated_observers = []
         cls.modified = False
@@ -73,7 +76,7 @@ class GfxPedal:
         else:
             cls.pedal_config = cls._load_pedal_config()
 
-        cls.load_variant("default")
+        cls.load_variant(cls.variants[0])
 
         # Dynamically import pedal class from generated pedal module and return an instance of the class
         spec = importlib.util.spec_from_file_location(
@@ -114,6 +117,8 @@ class GfxPedal:
 
     @classmethod
     def generate_pedal_variant(cls, variant_name: str = "default"):
+        if variant_name not in cls.variants:
+            cls.variants.append(variant_name)
         gfx_dev_log.debug(f"Generating {variant_name} {cls.name} variant")
         cls.variants_folder.mkdir(exist_ok=True)
         variant_file = cls.variants_folder / f"{variant_name}.py"
@@ -364,7 +369,7 @@ class GfxPedal:
     @classmethod
     def set_pedal_color(cls, pedal_color):
         cls.pedal_config.pedal_color = pedal_color
-        cls.modified = True
+        cls.update_pedal_info()
 
     @classmethod
     @property
@@ -374,7 +379,7 @@ class GfxPedal:
     @classmethod
     def set_text_color(cls, text_color):
         cls.pedal_config.text_color = text_color
-        cls.modified = True
+        cls.update_pedal_info()
 
     @classmethod
     def _load_pedal_config(cls):
@@ -411,7 +416,7 @@ class GfxPedal:
             gfx_dev_log.debug("Pedal updated observer not found")
 
     @classmethod
-    def load_variant(cls, variant: str = "default"):
+    def load_variant(cls, variant: str):
         gfx_dev_log.debug(f"Loading the {cls.name} {variant} variant")
         cls.variant = variant
         variant_filename = f"{variant}.py"
