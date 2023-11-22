@@ -124,6 +124,7 @@ class GfxDevMainWindow(QMainWindow, Ui_GfxDevMainWindow):
         self.adjust_and_center()
 
     def open_pedal(self, name: str):
+        gfx_dev_log.debug(f"Opening {name} pedal")
         self.close_pedal()
         self.gfx.open_pedal(name)
         self.gfx.pedal.add_pedal_updated_observer(self.reload_pedal)
