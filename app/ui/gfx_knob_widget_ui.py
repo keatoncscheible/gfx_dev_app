@@ -36,8 +36,6 @@ class Ui_GfxKnobWidget(object):
         self.gfx_knob.setSizePolicy(sizePolicy)
         self.gfx_knob.setMinimumSize(QSize(75, 75))
         self.gfx_knob.setMaximumSize(QSize(75, 75))
-        self.gfx_knob.setMaximum(1000)
-        self.gfx_knob.setValue(500)
 
         self.verticalLayout.addWidget(self.gfx_knob, 0, Qt.AlignHCenter)
 

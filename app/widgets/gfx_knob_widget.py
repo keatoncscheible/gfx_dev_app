@@ -15,8 +15,7 @@ class GfxKnobWidget(QWidget, Ui_GfxKnobWidget):
         self.name = name
         self.gfx_knob_name.setText(name)
         self.gfx_knob_name.setStyleSheet(f"color: {label_color.name()};")
-        self.gfx_knob.set_precision(2)
-        self.gfx_knob.set_value(value)
+        self.gfx_knob.set_knob_value(value)
         self.gfx_knob.knob_changed.connect(self.gfx_knob_changed)
         self.gfx_knob_name.label_changed.connect(self.gfx_knob_name_changed)
 
