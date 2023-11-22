@@ -23,13 +23,16 @@ class TransportControlWidget(QWidget, Ui_TransportControlWidget):
         self.populate_audio_file_combobox(audio_folder)
 
     def populate_audio_file_combobox(self, audio_folder: Path):
-        for filepath in audio_folder.iterdir():
-            if filepath.is_file():
-                self.audio_file_combobox.addItem(filepath.name)
+        audio_files = [
+            filepath.name for filepath in audio_folder.iterdir() if filepath.is_file()
+        ]
+        for audio_file in audio_files:
+            self.audio_file_combobox.addItem(audio_file)
 
     def audio_file_changed(self, audio_file: str):
         audio_file_w_path = self.audio_folder / audio_file
         gfx_dev_log.debug(f"Audio file changed to {audio_file_w_path}")
+        self.audio_file_combobox.setCurrentText(audio_file)
         self.set_audio_file.emit(str(audio_file_w_path))
 
     def play_button_pressed(self):

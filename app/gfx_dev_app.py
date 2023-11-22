@@ -23,8 +23,11 @@ def gfx_dev_app():
     app.setStyleSheet(stylesheet)
 
     gfx = GfxDevBackend()
-
     window = GfxDevMainWindow(gfx=gfx)
+    default_pedal = "saturate"
+    window.open_pedal(default_pedal)
+    window.transport_control.audio_file_changed("acoustic_melody_17.wav")
+
     window.show()
 
     ret = app.exec()
