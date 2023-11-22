@@ -176,6 +176,7 @@ class GfxDevMainWindow(QMainWindow, Ui_GfxDevMainWindow):
 
     def closeEvent(self, event):
         if self.prompt_for_save_if_needed():
+            self.gfx.audio_processor.stop()
             QApplication.instance().closeAllWindows()
             event.accept()
         else:
