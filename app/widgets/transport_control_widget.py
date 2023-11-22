@@ -32,7 +32,6 @@ class TransportControlWidget(QWidget, Ui_TransportControlWidget):
     def audio_file_changed(self, audio_file: str):
         audio_file_w_path = self.audio_folder / audio_file
         gfx_dev_log.debug(f"Audio file changed to {audio_file_w_path}")
-        self.audio_file_combobox.setCurrentText(audio_file)
         self.set_audio_file.emit(str(audio_file_w_path))
 
     def play_button_pressed(self):
