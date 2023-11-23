@@ -11,6 +11,7 @@ from gfx.exceptions import (
 )
 from gfx_dev_logging import gfx_dev_log
 from PySide6.QtGui import QColor
+from widgets.knob import KnobConfig
 
 
 # Helper Functions
@@ -25,10 +26,75 @@ def property_name(name):
 @dataclass
 class GfxPedalConfig:
     name: str
-    knobs: dict[str, float]
+    knobs: dict[str, KnobConfig]
     switches: dict[str, bool]
     pedal_color: QColor
     text_color: QColor
+    modified: bool = False
+    config_file: Path = None
+
+    def set_name(self, value: str):
+        if self.name != value:
+            self.name = value
+            self.modified = True
+
+    def set_knobs(self, value: dict[str, KnobConfig]):
+        if self.knobs != value:
+            self.knobs = value
+            self.modified = True
+
+    def set_switches(self, value: dict[str, bool]):
+        if self.switches != value:
+            self.switches = value
+            self.modified = True
+
+    def set_pedal_color(self, value: QColor):
+        if self.pedal_color != value:
+            self.pedal_color = value
+            self.modified = True
+
+    def set_text_color(self, value: QColor):
+        if self.text_color != value:
+            self.text_color = value
+            self.modified = True
+
+    @property
+    def is_modified(self):
+        return self.modified or any(
+            config_item.modified for config_item in self.config_items
+        )
+
+    @property
+    def config_items(self):
+        # TODO: Need to add the other config items to this list as we add modified flags
+        config_items = [self]
+        config_items.extend([knob for knob in self.knobs.values()])
+        return config_items
+
+    def load(self, config_file: Path):
+        if self.is_modified:
+            raise ValueError("Cant load when modified. Fix this")
+        with open(self.config_file, "rb") as file:
+            config: KnobConfig = pickle.load(file)
+            self.minimum_value = config.minimum_value
+            self.maximum_value = config.maximum_value
+            self.default_value = config.default_value
+            self.precision = config.precision
+            self.sensitivity = config.sensitivity
+            self.mode = config.mode
+            self.display_value = config.display_value
+            self.value = config.value
+            self.modified = False
+
+    def save(self):
+        if self.config_file is None:
+            # TODO: Replace with custom exception
+            raise ValueError("Config file does not exist")
+        if self.is_modified:
+            with open(self.config_file, "wb") as file:
+                pickle.dump(self, file)
+            for config_item in self.config_items:
+                config_item.modified = False
 
 
 class GfxPedalUpdateInfo:
@@ -61,11 +127,11 @@ class GfxPedal:
         ]
         cls.pedal_updated_observers = []
         cls.variant_updated_observers = []
-        cls.modified = False
         cls.pedal_update_info = GfxPedalUpdateInfo()
 
         # # If configuration is provided, we are creating a new pedal
         if pedal_config:
+            pedal_config.config_file = cls.pedal_config_file
             cls.pedal_config = pedal_config
             if not pedal_folder.exists():
                 cls.pedal_folder.mkdir(exist_ok=True)
@@ -91,11 +157,18 @@ class GfxPedal:
     def generate_pedal_module(cls):
         gfx_dev_log.debug(f"Generating {cls.name} module")
 
-        def create_property(file, name, type):
+        def create_knob_property(file, name):
             file.write("    @classmethod\n")
             file.write("    @property\n")
             file.write(f"    def {property_name(name)}(self):\n")
-            file.write(f'        return self.{type}["{name}"]\n')
+            file.write(f'        return self.knobs["{name}"].value\n')
+            file.write("\n")
+
+        def create_switch_property(file, name):
+            file.write("    @classmethod\n")
+            file.write("    @property\n")
+            file.write(f"    def {property_name(name)}(self):\n")
+            file.write(f'        return self.switches["{name}"]\n')
             file.write("\n")
 
         with open(cls.pedal_module_file, "w") as file:
@@ -111,9 +184,9 @@ class GfxPedal:
             file.write("\n")
             file.write(f"class {cls.pedal_class_name}(GfxPedal):\n")
             for knob_name in cls.knob_names:
-                create_property(file, knob_name, "knobs")
+                create_knob_property(file, knob_name)
             for switch_name in cls.switch_names:
-                create_property(file, switch_name, "switches")
+                create_switch_property(file, switch_name)
 
     @classmethod
     def generate_pedal_variant(cls, variant_name: str = "default"):
@@ -311,7 +384,7 @@ class GfxPedal:
         cls.variants_folder = cls.pedal_folder / "variants"
         old_pedal_module_file = cls.pedal_module_file
         old_name = cls.pedal_config.name
-        cls.pedal_config.name = name
+        cls.pedal_config.set_name(name)
         old_pedal_folder.rename(cls.pedal_folder)
         old_pedal_module_file.rename(cls.pedal_module_file)
         cls.pedal_update_info.name = (old_name, name)
@@ -339,8 +412,7 @@ class GfxPedal:
 
     @classmethod
     def change_knob_value(cls, knob_name, knob_value):
-        cls.pedal_config.knobs[knob_name] = knob_value
-        cls.modified = True
+        cls.pedal_config.knobs[knob_name].set_value(knob_value)
 
     @classmethod
     def change_knob_name(cls, old_name, new_name):
@@ -350,9 +422,14 @@ class GfxPedal:
         cls.update_pedal_info()
 
     @classmethod
+    def change_knob_config(cls, knob_name: str, knob_config: KnobConfig):
+        gfx_dev_log.debug("Knob config changing")
+        cls.pedal_config.knobs[knob_name] = knob_config
+        cls.update_pedal_info()
+
+    @classmethod
     def change_switch_state(cls, switch_name, switch_state):
         cls.pedal_config.switches[switch_name] = switch_state
-        cls.modified = True
 
     @classmethod
     def change_switch_name(cls, old_name, new_name):
@@ -368,7 +445,7 @@ class GfxPedal:
 
     @classmethod
     def set_pedal_color(cls, pedal_color):
-        cls.pedal_config.pedal_color = pedal_color
+        cls.pedal_config.set_pedal_color(pedal_color)
         cls.update_pedal_info()
 
     @classmethod
@@ -378,7 +455,7 @@ class GfxPedal:
 
     @classmethod
     def set_text_color(cls, text_color):
-        cls.pedal_config.text_color = text_color
+        cls.pedal_config.set_text_color(text_color)
         cls.update_pedal_info()
 
     @classmethod
@@ -390,9 +467,7 @@ class GfxPedal:
 
     @classmethod
     def save_pedal(cls):
-        with open(cls.pedal_config_file, "wb") as file:
-            pickle.dump(cls.pedal_config, file)
-        cls.modified = False
+        cls.pedal_config.save()
 
     @classmethod
     def update_pedal_info(cls):

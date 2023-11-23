@@ -107,7 +107,7 @@ class GfxDevMainWindow(QMainWindow, Ui_GfxDevMainWindow):
             True if the user saved or there was nothing to save
             False if the user decided to cancel the operation
         """
-        if self.pedal_widget and self.gfx.pedal.modified:
+        if self.pedal_widget and self.gfx.pedal.pedal_config.is_modified:
             save_pedal_prompt_response = self.show_save_pedal_prompt()
             if save_pedal_prompt_response == QMessageBox.Yes:
                 self.gfx.save_pedal()

@@ -24,8 +24,8 @@ def gfx_dev_app():
 
     gfx = GfxDevBackend()
     window = GfxDevMainWindow(gfx=gfx)
-    default_pedal = "saturate"
-    window.open_pedal(default_pedal)
+    # default_pedal = "saturate"
+    # window.open_pedal(default_pedal)
     window.transport_control.audio_file_combobox.setCurrentText(
         "acoustic_melody_17.wav"
     )

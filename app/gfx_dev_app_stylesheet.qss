@@ -1,13 +1,13 @@
 
-KnobWidget {
+Knob {
     background-color: #464646; 
 }
 
-KnobWidget:groove {
+Knob:groove {
     background: transparent;
 }
 
-KnobWidget:handle {
+Knob:handle {
     background: qradialgradient(
         cx: 0.5, cy: 0.5,
         fx: 0.5, fy: 0.5,

@@ -5,8 +5,8 @@ from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QColorDialog, QFrame, QMenu
 from ui.pedal_widget_ui import Ui_PedalWidget
 from utils.color_utils import calculate_color_gradient
-from widgets.gfx_knob_widget import GfxKnobWidget
 from widgets.gfx_switch_widget import GfxSwitchWidget
+from widgets.knob import KnobComponent
 from widgets.new_pedal_variant_dialog import NewPedalVariantDialog
 
 
@@ -99,12 +99,13 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.pedal_name_label.setStyleSheet(f"color: {pedal.text_color.name()};")
 
         self.knobs = {}
-        for knob_name, knob_value in pedal.knobs.items():
-            knob_widget = GfxKnobWidget(
-                name=knob_name, value=knob_value, label_color=pedal.text_color
+        for knob_name, knob_config in pedal.knobs.items():
+            knob_widget = KnobComponent(
+                name=knob_name, knob_config=knob_config, label_color=pedal.text_color
             )
             knob_widget.knob_changed.connect(pedal.change_knob_value)
-            knob_widget.knob_name_changed.connect(self.pedal.change_knob_name)
+            knob_widget.knob_name_changed.connect(pedal.change_knob_name)
+            knob_widget.knob_config_changed.connect(pedal.change_knob_config)
             self.knobs[knob_name] = knob_widget
 
         self.switches = {}

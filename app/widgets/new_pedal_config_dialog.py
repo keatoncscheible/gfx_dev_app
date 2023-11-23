@@ -5,6 +5,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QDialog, QMessageBox
 from ui.new_pedal_config_dialog_ui import Ui_NewPedalConfigDialog
+from widgets.knob import KnobConfig
 
 
 class NewPedalConfigDialog(QDialog, Ui_NewPedalConfigDialog):
@@ -44,7 +45,7 @@ class NewPedalConfigDialog(QDialog, Ui_NewPedalConfigDialog):
             self.show_pedal_name_missing_prompt()
             return
 
-        knobs = {f"Knob {knob_idx}": 0.5 for knob_idx in range(knob_cnt)}
+        knobs = {f"Knob {knob_idx}": KnobConfig() for knob_idx in range(knob_cnt)}
         switches = {f"Switch {switch_idx}": True for switch_idx in range(switch_cnt)}
 
         pedal_config = GfxPedalConfig(
