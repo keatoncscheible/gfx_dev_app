@@ -38,11 +38,6 @@ class Knob(QDial):
         self.update_knob_settings()
 
     def set_knob_value(self, value: float):
-        if self.mode == "logarithmic":
-            value = 20 * np.log10(value)
-
-        if not (self.minimum_value <= value <= self.maximum_value):
-            raise ValueError(f"Value must be within the range [{self.minimum_value}, {self.maximum_value}]")
         value_int = int(value / self.precision)
         self.setValue(value_int)
 
@@ -96,36 +91,7 @@ class Knob(QDial):
         """Ignore the mouseReleaseEvent"""
 
 
-class KnobComponentContextMenu(QMenu):
-    remove_knob = Signal()
-
-    def __init__(self, parent: KnobComponent, knob_config: KnobConfig):
-        super().__init__(parent)
-        self.knob_config = knob_config
-
-        # Actions
-        self.action_config_knob = QAction("Configure Knob", self)
-        self.action_remove_knob = QAction("Remove Knob", self)
-
-        # Add actions to the context menu
-        self.addAction(self.action_config_knob)
-        self.addAction(self.action_remove_knob)
-
-        # Connect actions
-        self.action_config_knob.triggered.connect(self.config_knob_triggered)
-        self.action_remove_knob.triggered.connect(self.remove_knob_triggered)
-
-    def config_knob_triggered(self):
-        self.knob_config_dialog = KnobConfigDialog(self.knob_config)
-        self.knob_config_dialog.exec_()
-
-    def remove_knob_triggered(self):
-        self.remove_knob.emit()
-
-
 from pyfx.ui.knob_component_ui import Ui_KnobComponent
-
-# TODO: I think I may be able to change the knob values in the config without having to emit signals. Look into this
 
 
 class KnobComponent(QWidget, Ui_KnobComponent):
@@ -169,6 +135,15 @@ class KnobComponent(QWidget, Ui_KnobComponent):
         # Handle actions
         if action == action_config_knob:
             pyfx_log.debug("Configure Knob Pressed")
+
+            dialog = KnobConfigDialog(self.knob_config)
+            dialog_result = dialog.exec_()
+            if dialog_result == QDialog.Accepted:
+                pyfx_log.debug(f"Updating {self.knob_config.name} knob configuration")
+                self.knob.load_knob_config(self.knob_config)
+            else:
+                pyfx_log.debug(f"Not updating {self.knob_config.name} knob configuration: {dialog_result}")
+
         elif action == action_remove_knob:
             pyfx_log.debug("Remove Knob Pressed")
             if self.show_remove_knob_prompt(self.knob_config.name) == QMessageBox.Yes:
@@ -220,6 +195,14 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
             return
         pyfx_log.debug("Knob Config applied")
         super().accept()
+
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            # Ignore Enter and Return keys
+            event.ignore()
+        else:
+            # Handle other key events normally
+            super().keyPressEvent(event)
 
     def show_invalid_min_max_prompt(self):
         pedal_name_missing_prompt = QMessageBox()

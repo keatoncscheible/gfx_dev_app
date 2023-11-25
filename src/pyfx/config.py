@@ -89,6 +89,7 @@ class KnobConfig(ConfigItem):
     def set_mode(self, value: str):
         if self.mode != value:
             self.mode = value
+            self.value = self.default_value
             self.modified = True
             self.notify_observers()
 
