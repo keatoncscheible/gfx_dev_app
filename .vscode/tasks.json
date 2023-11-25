@@ -2,11 +2,11 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Open Gfx Dev App",
+            "label": "Open Pedal Builder App",
             "type": "shell",
             "command": ".venv\\Scripts\\python.exe",
             "args": [
-                "app\\gfx_dev_app.py"
+                "src\\pyfx\\pedal_builder\\pedal_builder_app.py"
             ],
             "group": {
                 "kind": "build",
@@ -18,11 +18,11 @@
             }
         },
         {
-            "label": "Build and Open Gfx Dev App",
+            "label": "Build and Open Pedal Builder App",
             "type": "shell",
             "command": ".venv\\Scripts\\python.exe",
             "args": [
-                "app\\tools\\build_and_open_app.py"
+                "src\\pyfx\\tools\\build_and_open_app.py"
             ],
             "group": {
                 "kind": "build",
@@ -34,11 +34,11 @@
             }
         },
         {
-            "label": "Compile Gfx Dev App Ui Files",
+            "label": "Compile Pedal Builder App Ui Files",
             "type": "shell",
             "command": ".venv\\Scripts\\python.exe",
             "args": [
-                "app\\tools\\compile_ui_files.py"
+                "src\\pyfx\\tools\\compile_ui_files.py"
             ],
             "group": {
                 "kind": "build",

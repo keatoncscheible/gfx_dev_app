@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Gfx Dev App",
+            "name": "Debug Pedal Builder App",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/app/gfx_dev_app.py",
+            "program": "${workspaceFolder}/src/pyfx/pedal_builder/pedal_builder_app.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }

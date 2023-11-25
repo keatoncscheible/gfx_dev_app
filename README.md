@@ -1,5 +1,21 @@
-# GFX Development Platform
+# PyFx
 
-## Overview
+[![PyPI - Version](https://img.shields.io/pypi/v/pyfx.svg)](https://pypi.org/project/pyfx)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyfx.svg)](https://pypi.org/project/pyfx)
 
-The Guitar Effects Development Platform is a Python-based application built with PySide 6, designed to facilitate the development and testing of digital signal processing (DSP) algorithms for guitar effects pedals. With this platform, you can quickly prototype, analyze, and fine-tune your DSP algorithms, making it easier to create innovative guitar effects.
+-----
+
+**Table of Contents**
+
+- [Installation](#installation)
+- [License](#license)
+
+## Installation
+
+```console
+pip install pyfx
+```
+
+## License
+
+`pyfx` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
