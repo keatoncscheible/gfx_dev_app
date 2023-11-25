@@ -45,19 +45,19 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
         context_menu = QMenu(self)
 
         # Add actions to the context menu
-        action_config_footswitch = context_menu.addAction("Configure Footswitch")
+        # action_config_footswitch = context_menu.addAction("Configure Footswitch")
         action_remove_footswitch = context_menu.addAction("Remove Footswitch")
 
         # Show the context menu at the cursor position
         action = context_menu.exec(event.globalPos())
 
         # Handle actions
-        if action == action_config_footswitch:
-            pyfx_log.debug("Configure Footswitch Pressed")
-        elif action == action_remove_footswitch:
+        if action == action_remove_footswitch:
             pyfx_log.debug("Remove Footswitch Pressed")
-            if self.show_remove_footswitch_prompt(self.name) == QMessageBox.Yes:
+            if self.show_remove_footswitch_prompt(self.footswitch_config.name) == QMessageBox.Yes:
                 self.remove_footswitch.emit(self)
+        # elif action == action_config_footswitch:
+        #     pyfx_log.debug("Configure Footswitch Pressed")
 
     def show_remove_footswitch_prompt(self, name: str):
         return QMessageBox.question(

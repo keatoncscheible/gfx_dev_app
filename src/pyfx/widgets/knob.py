@@ -176,6 +176,7 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
         self.mode_combobox.setCurrentText(knob_config.mode)
         self.display_value_checkbox.setChecked(knob_config.display_value)
         self.button_box.clicked.connect(self.apply_clicked)
+        self.mode_combobox.currentTextChanged.connect(self.change_mode_settings)
 
     def apply_clicked(self):
         self.knob_config.set_minimum_value(self.minimum_spinbox.value())
@@ -195,6 +196,18 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
             return
         pyfx_log.debug("Knob Config applied")
         super().accept()
+
+    def change_mode_settings(self, mode: str):
+        if mode == "logarithmic":
+            self.minimum_spinbox.setSuffix(" dB")
+            self.maximum_spinbox.setSuffix(" dB")
+            self.default_spinbox.setSuffix(" dB")
+            self.precision_spinbox.setSuffix(" dB")
+        else:
+            self.minimum_spinbox.setSuffix("")
+            self.maximum_spinbox.setSuffix("")
+            self.default_spinbox.setSuffix("")
+            self.precision_spinbox.setSuffix("")
 
     def keyPressEvent(self, event):
         if event.key() in (Qt.Key_Return, Qt.Key_Enter):
