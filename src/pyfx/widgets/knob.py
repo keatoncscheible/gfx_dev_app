@@ -101,6 +101,7 @@ class KnobComponent(QWidget, Ui_KnobComponent):
     def __init__(self, knob_config: KnobConfig):
         super().__init__()
         self.setupUi(self)
+        self._knob_changed_observers = []
         self.knob_config = knob_config
         self.knob_name.setText(knob_config.name)
         self.knob_name.setStyleSheet("color: #ffffff;")
@@ -109,6 +110,16 @@ class KnobComponent(QWidget, Ui_KnobComponent):
         self.knob_name.label_changed.connect(self.change_knob_name)
         self.update_knob_editbox_visibility()
         self.update_knob_editbox()
+
+    def add_knob_changed_observer(self, observer):
+        self._knob_changed_observers.append(observer)
+
+    def remove_knob_changed_observer(self, observer):
+        self._knob_changed_observers.remove(observer)
+
+    def notify_knob_changed_observers(self):
+        for observer in self._knob_changed_observers:
+            observer()
 
     def update_knob_editbox_visibility(self):
         visible = self.knob_config.display_enabled
@@ -136,6 +147,7 @@ class KnobComponent(QWidget, Ui_KnobComponent):
             return
         pyfx_log.debug(f"Knob name changed from {old_name} to {new_name}")
         self.knob_name_changed.emit(old_name, new_name)
+        self.notify_knob_changed_observers()
 
     def remove_knob_cb(self):
         self.remove_knob.emit(self)

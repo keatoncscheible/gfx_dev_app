@@ -84,7 +84,7 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
     def __init__(self, footswitch_config: FootswitchConfig):
         super().__init__()
         self.setupUi(self)
-
+        self._footswitch_changed_observers = []
         self.footswitch_config = footswitch_config
         self.state = footswitch_config.state
         self.footswitch_name.setText(footswitch_config.name)
@@ -97,6 +97,16 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
         self.footswitch_name.label_changed.connect(self.change_footswitch_name)
         self.update_footswitch_editbox_visibility()
         self.update_footswitch_editbox()
+
+    def add_footswitch_changed_observer(self, observer):
+        self._footswitch_changed_observers.append(observer)
+
+    def remove_footswitch_changed_observer(self, observer):
+        self._footswitch_changed_observers.remove(observer)
+
+    def notify_footswitch_changed_observers(self):
+        for observer in self._footswitch_changed_observers:
+            observer()
 
     def update_footswitch_editbox_visibility(self):
         visible = self.footswitch_config.display_enabled
@@ -129,6 +139,7 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
             return
         pyfx_log.debug(f"Footswitch name changed from {old_name} to {new_name}")
         self.footswitch_name_changed.emit(old_name, new_name)
+        self.notify_footswitch_changed_observers()
 
     def contextMenuEvent(self, event):
         context_menu = QMenu(self)
@@ -155,8 +166,9 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
                 self.footswitch.load_footswitch_config(self.footswitch_config)
                 self.update_footswitch_editbox_visibility()
                 self.update_footswitch_editbox()
+                self.notify_footswitch_changed_observers()
             else:
-                pyfx_log.debug(f"Not updating {self.footswitch_config.name} knob configuration: {dialog_result}")
+                pyfx_log.debug(f"Not updating {self.footswitch_config.name} footswitch configuration: {dialog_result}")
 
     def show_remove_footswitch_prompt(self, name: str):
         return QMessageBox.question(

@@ -142,17 +142,31 @@ class PedalBuilder:
         pyfx_log.debug(f"Generating {self.pedal_name} module")
 
         def create_knob_property(file, name):
-            file.write("    @classmethod\n")
             file.write("    @property\n")
             file.write(f"    def {property_name(name)}(self):\n")
-            file.write(f'        return self.pedal_config.knobs["{name}"].value\n')
+            file.write(f'        return self.knobs["{name}"].value\n')
+            file.write("\n")
+            file.write("    @property\n")
+            file.write(f"    def {property_name(name)}_min(self):\n")
+            file.write(f'        return self.knobs["{name}"].minimum_value\n')
+            file.write("\n")
+            file.write("    @property\n")
+            file.write(f"    def {property_name(name)}_max(self):\n")
+            file.write(f'        return self.knobs["{name}"].maximum_value\n')
+            file.write("\n")
+            file.write("    @property\n")
+            file.write(f"    def {property_name(name)}_default(self):\n")
+            file.write(f'        return self.knobs["{name}"].default_value\n')
             file.write("\n")
 
         def create_switch_property(file, name):
-            file.write("    @classmethod\n")
             file.write("    @property\n")
             file.write(f"    def {property_name(name)}(self):\n")
-            file.write(f'        return self.pedal_config.footswitches["{name}"]\n')
+            footswitch_type = self.pedal_config.footswitches[name].footswitch_type
+            if footswitch_type in ["latching", "momentary"]:
+                file.write(f'        return self.footswitches["{name}"].state\n')
+            elif footswitch_type == "mode":
+                file.write(f'        return self.footswitches["{name}"].mode\n')
             file.write("\n")
 
         with open(self.pedal_module_file, "w") as file:
