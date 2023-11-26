@@ -189,3 +189,27 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.pedal_config.remove_footswitch(footswitch_widget.footswitch_config.name)
         self.footswitch_layout.removeWidget(footswitch_widget)
         footswitch_widget.deleteLater()
+
+    def hide_all_knob_displays(self):
+        for knob_widget in self.knob_widgets:
+            knob_widget.knob_editbox.hide()
+            knob_widget.knob_config.set_display_enabled(False)
+            knob_widget.update_knob_editbox_visibility()
+
+    def show_all_knob_displays(self):
+        for knob_widget in self.knob_widgets:
+            knob_widget.knob_editbox.show()
+            knob_widget.knob_config.set_display_enabled(True)
+            knob_widget.update_knob_editbox_visibility()
+
+    def hide_all_footswitch_displays(self):
+        for footswitch_widget in self.footswitch_widgets:
+            footswitch_widget.footswitch_editbox.hide()
+            footswitch_widget.footswitch_config.set_display_enabled(False)
+            footswitch_widget.update_footswitch_editbox_visibility()
+
+    def show_all_footswitch_displays(self):
+        for footswitch_widget in self.footswitch_widgets:
+            footswitch_widget.footswitch_editbox.show()
+            footswitch_widget.footswitch_config.set_display_enabled(True)
+            footswitch_widget.update_footswitch_editbox_visibility()

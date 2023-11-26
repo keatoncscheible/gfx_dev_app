@@ -27,6 +27,16 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         if pedal_builder.pedal_config is not None:
             self.pedal_widget = PedalWidget(pedal_config=self.pedal_builder.pedal_config)
             self.pedal_layout.insertWidget(1, self.pedal_widget)
+            all_knobs_displays_enabled = all(
+                knob_widget.knob_config.display_enabled for knob_widget in self.pedal_widget.knob_widgets
+            )
+            self.action_knob_displays.setChecked(all_knobs_displays_enabled)
+            all_footswitch_displays_enabled = all(
+                footswitch_widget.footswitch_config.display_enabled
+                for footswitch_widget in self.pedal_widget.footswitch_widgets
+            )
+            self.action_footswitch_displays.setChecked(all_footswitch_displays_enabled)
+
         else:
             self.pedal_widget = None
 
@@ -77,6 +87,22 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
     def pedal__add_footswitch_cb(self):
         pyfx_log.debug("Pedal->Add Footswitch pressed")
         self.pedal_widget.add_footswitch()
+
+    """View Menu Callbacks"""
+
+    def view__knob_displays_cb(self, state: bool):
+        pyfx_log.debug(f"View->Knob Displays pressed: {state}")
+        if state:
+            self.pedal_widget.show_all_knob_displays()
+        else:
+            self.pedal_widget.hide_all_knob_displays()
+
+    def view__footswitch_displays_cb(self, state: bool):
+        pyfx_log.debug(f"View->Footswitch Displays pressed: {state}")
+        if state:
+            self.pedal_widget.show_all_footswitch_displays()
+        else:
+            self.pedal_widget.hide_all_footswitch_displays()
 
     """Help Menu Callbacks"""
 

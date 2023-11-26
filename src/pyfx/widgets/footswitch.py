@@ -69,8 +69,8 @@ class Footswitch(QPushButton):
         self.footswitch_toggled.emit(state)
 
     def footswitch_clicked_cb(self):
-        pyfx_log.debug(f"{self.footswitch_config.name} clicked")
         self.footswitch_config.next_mode()
+        pyfx_log.debug(f"{self.footswitch_config.name} mode changed to {self.footswitch_config.mode}")
         self.footswitch_clicked.emit()
 
 
