@@ -36,7 +36,7 @@ class KnobConfig(ConfigItem):
         precision: float = 0.01,
         sensitivity: float = 1,
         mode: str = "linear",
-        display_value: bool = False,
+        display_enabled: bool = False,
         value: float = 0.5,
     ):
         super().__init__()
@@ -47,7 +47,7 @@ class KnobConfig(ConfigItem):
         self.precision = precision
         self.sensitivity = sensitivity
         self.mode = mode
-        self.display_value = display_value
+        self.display_enabled = display_enabled
         self.value = value
 
     def set_name(self, value: str):
@@ -93,9 +93,9 @@ class KnobConfig(ConfigItem):
             self.modified = True
             self.notify_observers()
 
-    def set_display_value(self, value: bool):
-        if self.display_value != value:
-            self.display_value = value
+    def set_display_enabled(self, value: bool):
+        if self.display_enabled != value:
+            self.display_enabled = value
             self.modified = True
             self.notify_observers()
 
@@ -107,10 +107,23 @@ class KnobConfig(ConfigItem):
 
 
 class FootswitchConfig(ConfigItem):
-    def __init__(self, name: str, state: bool = True):
+    def __init__(
+        self,
+        name: str,
+        footswitch_type: str = "latching",
+        default_state: bool = True,
+        modes: Optional[list[str]] = None,
+        display_enabled: bool = False,
+    ):
         super().__init__()
         self.name = name
-        self.state = state
+        self.footswitch_type = footswitch_type
+        self.default_state = default_state
+        self.state = default_state
+        self.modes = modes
+        self.mode = modes[0] if modes is not None else None
+        self.mode_idx = 0
+        self.display_enabled = display_enabled
 
     def set_name(self, value: str):
         if self.name != value:
@@ -118,9 +131,52 @@ class FootswitchConfig(ConfigItem):
             self.modified = True
             self.notify_observers()
 
+    def set_footswitch_type(self, value: str):
+        valid_footswitch_types = ["latching", "momentary", "mode"]
+        if value not in valid_footswitch_types:
+            msg = f"{value} is an invalid footswitch type. Valid types are {valid_footswitch_types}"
+            raise ValueError(msg)
+        if self.footswitch_type != value:
+            self.footswitch_type = value
+            self.modified = True
+            self.notify_observers()
+
+    def set_default_state(self, value: bool):
+        if self.default_state != value:
+            self.default_state = value
+            self.modified = True
+            self.notify_observers()
+
     def set_state(self, value: bool):
         if self.state != value:
             self.state = value
+            self.modified = True
+            self.notify_observers()
+
+    def set_modes(self, value: list[str]):
+        if self.modes != value:
+            self.modes = value
+            try:
+                self.mode = self.modes[0]
+                self.mode_idx = 0
+            except TypeError:
+                self.mode = None
+            self.modified = True
+            self.notify_observers()
+
+    def set_mode(self, value: str):
+        if self.mode != value:
+            self.mode = value
+            self.modified = True
+            self.notify_observers()
+
+    def next_mode(self):
+        self.mode_idx = (self.mode_idx + 1) % len(self.modes)
+        self.set_mode(self.modes[self.mode_idx])
+
+    def set_display_enabled(self, value: bool):
+        if self.display_enabled != value:
+            self.display_enabled = value
             self.modified = True
             self.notify_observers()
 

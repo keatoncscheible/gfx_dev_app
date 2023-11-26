@@ -23,24 +23,24 @@ class Ui_KnobConfigDialog(object):
     def setupUi(self, KnobConfigDialog):
         if not KnobConfigDialog.objectName():
             KnobConfigDialog.setObjectName(u"KnobConfigDialog")
-        KnobConfigDialog.resize(302, 342)
+        KnobConfigDialog.resize(276, 341)
         self.knob_config_dialog_layout = QVBoxLayout(KnobConfigDialog)
         self.knob_config_dialog_layout.setSpacing(20)
         self.knob_config_dialog_layout.setObjectName(u"knob_config_dialog_layout")
-        self.new_pedal_variant_label = QLabel(KnobConfigDialog)
-        self.new_pedal_variant_label.setObjectName(u"new_pedal_variant_label")
+        self.knob_configuration_label = QLabel(KnobConfigDialog)
+        self.knob_configuration_label.setObjectName(u"knob_configuration_label")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.new_pedal_variant_label.sizePolicy().hasHeightForWidth())
-        self.new_pedal_variant_label.setSizePolicy(sizePolicy)
-        self.new_pedal_variant_label.setMinimumSize(QSize(0, 30))
-        self.new_pedal_variant_label.setMaximumSize(QSize(16777215, 30))
+        sizePolicy.setHeightForWidth(self.knob_configuration_label.sizePolicy().hasHeightForWidth())
+        self.knob_configuration_label.setSizePolicy(sizePolicy)
+        self.knob_configuration_label.setMinimumSize(QSize(0, 30))
+        self.knob_configuration_label.setMaximumSize(QSize(16777215, 30))
         font = QFont()
         font.setPointSize(16)
-        self.new_pedal_variant_label.setFont(font)
+        self.knob_configuration_label.setFont(font)
 
-        self.knob_config_dialog_layout.addWidget(self.new_pedal_variant_label, 0, Qt.AlignHCenter)
+        self.knob_config_dialog_layout.addWidget(self.knob_configuration_label, 0, Qt.AlignHCenter)
 
         self.knob_config_form_layout = QFormLayout()
         self.knob_config_form_layout.setObjectName(u"knob_config_form_layout")
@@ -159,20 +159,20 @@ class Ui_KnobConfigDialog(object):
 
         self.knob_config_form_layout.setWidget(5, QFormLayout.FieldRole, self.mode_combobox)
 
-        self.display_value_label = QLabel(KnobConfigDialog)
-        self.display_value_label.setObjectName(u"display_value_label")
-        self.display_value_label.setFont(font1)
+        self.enable_display_label = QLabel(KnobConfigDialog)
+        self.enable_display_label.setObjectName(u"enable_display_label")
+        self.enable_display_label.setFont(font1)
 
-        self.knob_config_form_layout.setWidget(6, QFormLayout.LabelRole, self.display_value_label)
+        self.knob_config_form_layout.setWidget(6, QFormLayout.LabelRole, self.enable_display_label)
 
-        self.display_value_checkbox = QCheckBox(KnobConfigDialog)
-        self.display_value_checkbox.setObjectName(u"display_value_checkbox")
-        sizePolicy1.setHeightForWidth(self.display_value_checkbox.sizePolicy().hasHeightForWidth())
-        self.display_value_checkbox.setSizePolicy(sizePolicy1)
-        self.display_value_checkbox.setMaximumSize(QSize(100, 16777215))
-        self.display_value_checkbox.setLayoutDirection(Qt.LeftToRight)
+        self.enable_display_checkbox = QCheckBox(KnobConfigDialog)
+        self.enable_display_checkbox.setObjectName(u"enable_display_checkbox")
+        sizePolicy1.setHeightForWidth(self.enable_display_checkbox.sizePolicy().hasHeightForWidth())
+        self.enable_display_checkbox.setSizePolicy(sizePolicy1)
+        self.enable_display_checkbox.setMaximumSize(QSize(100, 16777215))
+        self.enable_display_checkbox.setLayoutDirection(Qt.LeftToRight)
 
-        self.knob_config_form_layout.setWidget(6, QFormLayout.FieldRole, self.display_value_checkbox)
+        self.knob_config_form_layout.setWidget(6, QFormLayout.FieldRole, self.enable_display_checkbox)
 
 
         self.knob_config_dialog_layout.addLayout(self.knob_config_form_layout)
@@ -196,7 +196,7 @@ class Ui_KnobConfigDialog(object):
 
     def retranslateUi(self, KnobConfigDialog):
         KnobConfigDialog.setWindowTitle(QCoreApplication.translate("KnobConfigDialog", u"Configure Knob", None))
-        self.new_pedal_variant_label.setText(QCoreApplication.translate("KnobConfigDialog", u"Knob Configuration", None))
+        self.knob_configuration_label.setText(QCoreApplication.translate("KnobConfigDialog", u"Knob Configuration", None))
         self.minimum_label.setText(QCoreApplication.translate("KnobConfigDialog", u"Minimum Value", None))
         self.maximum_label.setText(QCoreApplication.translate("KnobConfigDialog", u"Maximum Value", None))
         self.default_label.setText(QCoreApplication.translate("KnobConfigDialog", u"Default Value", None))
@@ -207,7 +207,7 @@ class Ui_KnobConfigDialog(object):
         self.mode_combobox.setItemText(0, QCoreApplication.translate("KnobConfigDialog", u"linear", None))
         self.mode_combobox.setItemText(1, QCoreApplication.translate("KnobConfigDialog", u"logarithmic", None))
 
-        self.display_value_label.setText(QCoreApplication.translate("KnobConfigDialog", u"Display Value", None))
-        self.display_value_checkbox.setText("")
+        self.enable_display_label.setText(QCoreApplication.translate("KnobConfigDialog", u"Enable Display", None))
+        self.enable_display_checkbox.setText("")
     # retranslateUi
 

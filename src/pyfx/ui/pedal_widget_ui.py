@@ -24,10 +24,10 @@ class Ui_PedalWidget(object):
     def setupUi(self, PedalWidget):
         if not PedalWidget.objectName():
             PedalWidget.setObjectName(u"PedalWidget")
-        PedalWidget.resize(219, 344)
+        PedalWidget.resize(219, 340)
         PedalWidget.setMaximumSize(QSize(16777215, 16777215))
         self.verticalLayout = QVBoxLayout(PedalWidget)
-        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setSpacing(20)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(20, 40, 20, 20)
         self.pedal_name_label = EditableLabelWidget(PedalWidget)
@@ -47,16 +47,18 @@ class Ui_PedalWidget(object):
         self.verticalLayout.addWidget(self.pedal_name_label, 0, Qt.AlignHCenter)
 
         self.knob_layout = QGridLayout()
-        self.knob_layout.setSpacing(10)
         self.knob_layout.setObjectName(u"knob_layout")
         self.knob_layout.setSizeConstraint(QLayout.SetDefaultConstraint)
+        self.knob_layout.setHorizontalSpacing(10)
+        self.knob_layout.setVerticalSpacing(0)
         self.knob_layout.setContentsMargins(20, 0, 20, 60)
 
         self.verticalLayout.addLayout(self.knob_layout)
 
         self.footswitch_layout = QGridLayout()
-        self.footswitch_layout.setSpacing(10)
         self.footswitch_layout.setObjectName(u"footswitch_layout")
+        self.footswitch_layout.setHorizontalSpacing(10)
+        self.footswitch_layout.setVerticalSpacing(0)
         self.footswitch_layout.setContentsMargins(20, -1, 20, 20)
 
         self.verticalLayout.addLayout(self.footswitch_layout)

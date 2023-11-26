@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>94</width>
-    <height>158</height>
+    <height>140</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,6 +15,12 @@
   </property>
   <layout class="QVBoxLayout" name="knob_component_layout">
    <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -35,6 +41,9 @@
    </item>
    <item alignment="Qt::AlignHCenter">
     <widget class="QLineEdit" name="knob_editbox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -46,6 +55,9 @@
        <width>60</width>
        <height>16777215</height>
       </size>
+     </property>
+     <property name="frame">
+      <bool>false</bool>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

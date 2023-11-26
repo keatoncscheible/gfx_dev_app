@@ -111,7 +111,7 @@ class KnobComponent(QWidget, Ui_KnobComponent):
         self.update_knob_editbox()
 
     def update_knob_editbox_visibility(self):
-        visible = self.knob_config.display_value
+        visible = self.knob_config.display_enabled
         self.knob_editbox.setVisible(visible)
         self.knob_editbox_placeholder.setVisible(not visible)
 
@@ -193,7 +193,7 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
         self.precision_spinbox.setValue(knob_config.precision)
         self.sensitivity_spinbox.setValue(knob_config.sensitivity)
         self.mode_combobox.setCurrentText(knob_config.mode)
-        self.display_value_checkbox.setChecked(knob_config.display_value)
+        self.enable_display_checkbox.setChecked(knob_config.display_enabled)
         self.button_box.clicked.connect(self.apply_clicked)
         self.mode_combobox.currentTextChanged.connect(self.change_mode_settings)
 
@@ -204,7 +204,7 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
         self.knob_config.set_precision(self.precision_spinbox.value())
         self.knob_config.set_sensitivity(self.sensitivity_spinbox.value())
         self.knob_config.set_mode(self.mode_combobox.currentText())
-        self.knob_config.set_display_value(self.display_value_checkbox.isChecked())
+        self.knob_config.set_display_enabled(self.enable_display_checkbox.isChecked())
 
         if self.knob_config.maximum_value < self.knob_config.minimum_value:
             self.show_invalid_min_max_prompt()

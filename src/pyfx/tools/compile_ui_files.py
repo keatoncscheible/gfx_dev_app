@@ -6,18 +6,18 @@ ui_folder = "ui"
 resources_folder = "resources"
 
 
-def fix_transport_control_icons_import():
-    transport_control_ui_file = os.path.join(app_folder, ui_folder, "transport_control_widget_ui.py")
+def fix_icons_import(file: str):
+    transport_control_ui_file = os.path.join(app_folder, ui_folder, file)
     new_icon_import = "import pyfx.assets.icons_rc\n"
 
     with open(transport_control_ui_file) as file:
-        transport_control_ui_file_contents = file.read()
+        ui_file_contents = file.read()
 
     old_icon_import_regex = r"import\s+icons_rc\s*\n"
     new_transport_control_ui_file_contents = re.sub(
         old_icon_import_regex,
         new_icon_import + "\n",
-        transport_control_ui_file_contents,
+        ui_file_contents,
     )
 
     with open(transport_control_ui_file, "w") as file:
@@ -33,4 +33,5 @@ for filename in os.listdir(f"{app_folder}/{ui_folder}"):
             f".venv\\Scripts\\python.exe .venv\\Scripts\\pyside6-uic.exe {app_folder}\\{ui_folder}\\{root}.ui -o {app_folder}\\{ui_folder}\\{generated_py_ui_file}"
         )
 
-fix_transport_control_icons_import()
+fix_icons_import("transport_control_widget_ui.py")
+fix_icons_import("footswitch_config_dialog_ui.py")

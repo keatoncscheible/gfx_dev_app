@@ -25,10 +25,11 @@ class Ui_KnobComponent(object):
     def setupUi(self, KnobComponent):
         if not KnobComponent.objectName():
             KnobComponent.setObjectName(u"KnobComponent")
-        KnobComponent.resize(94, 158)
+        KnobComponent.resize(94, 140)
         self.knob_component_layout = QVBoxLayout(KnobComponent)
         self.knob_component_layout.setSpacing(0)
         self.knob_component_layout.setObjectName(u"knob_component_layout")
+        self.knob_component_layout.setContentsMargins(-1, 0, -1, 0)
         self.knob_editbox_placeholder = QWidget(KnobComponent)
         self.knob_editbox_placeholder.setObjectName(u"knob_editbox_placeholder")
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -42,9 +43,11 @@ class Ui_KnobComponent(object):
 
         self.knob_editbox = QLineEdit(KnobComponent)
         self.knob_editbox.setObjectName(u"knob_editbox")
+        self.knob_editbox.setEnabled(False)
         sizePolicy.setHeightForWidth(self.knob_editbox.sizePolicy().hasHeightForWidth())
         self.knob_editbox.setSizePolicy(sizePolicy)
         self.knob_editbox.setMaximumSize(QSize(60, 16777215))
+        self.knob_editbox.setFrame(False)
         self.knob_editbox.setAlignment(Qt.AlignCenter)
 
         self.knob_component_layout.addWidget(self.knob_editbox, 0, Qt.AlignHCenter)
