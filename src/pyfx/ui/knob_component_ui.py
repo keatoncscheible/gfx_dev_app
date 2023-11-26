@@ -25,20 +25,29 @@ class Ui_KnobComponent(object):
     def setupUi(self, KnobComponent):
         if not KnobComponent.objectName():
             KnobComponent.setObjectName(u"KnobComponent")
-        KnobComponent.resize(94, 136)
-        self.verticalLayout = QVBoxLayout(KnobComponent)
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.knob_editbox = QLineEdit(KnobComponent)
-        self.knob_editbox.setObjectName(u"knob_editbox")
+        KnobComponent.resize(94, 158)
+        self.knob_component_layout = QVBoxLayout(KnobComponent)
+        self.knob_component_layout.setSpacing(0)
+        self.knob_component_layout.setObjectName(u"knob_component_layout")
+        self.knob_editbox_placeholder = QWidget(KnobComponent)
+        self.knob_editbox_placeholder.setObjectName(u"knob_editbox_placeholder")
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.knob_editbox_placeholder.sizePolicy().hasHeightForWidth())
+        self.knob_editbox_placeholder.setSizePolicy(sizePolicy)
+        self.knob_editbox_placeholder.setMinimumSize(QSize(0, 22))
+
+        self.knob_component_layout.addWidget(self.knob_editbox_placeholder)
+
+        self.knob_editbox = QLineEdit(KnobComponent)
+        self.knob_editbox.setObjectName(u"knob_editbox")
         sizePolicy.setHeightForWidth(self.knob_editbox.sizePolicy().hasHeightForWidth())
         self.knob_editbox.setSizePolicy(sizePolicy)
         self.knob_editbox.setMaximumSize(QSize(60, 16777215))
+        self.knob_editbox.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout.addWidget(self.knob_editbox, 0, Qt.AlignHCenter)
+        self.knob_component_layout.addWidget(self.knob_editbox, 0, Qt.AlignHCenter)
 
         self.knob = Knob(KnobComponent)
         self.knob.setObjectName(u"knob")
@@ -47,7 +56,7 @@ class Ui_KnobComponent(object):
         self.knob.setMinimumSize(QSize(75, 75))
         self.knob.setMaximumSize(QSize(75, 75))
 
-        self.verticalLayout.addWidget(self.knob, 0, Qt.AlignHCenter)
+        self.knob_component_layout.addWidget(self.knob, 0, Qt.AlignHCenter)
 
         self.knob_name = EditableLabelWidget(KnobComponent)
         self.knob_name.setObjectName(u"knob_name")
@@ -61,7 +70,7 @@ class Ui_KnobComponent(object):
         font.setBold(True)
         self.knob_name.setFont(font)
 
-        self.verticalLayout.addWidget(self.knob_name, 0, Qt.AlignHCenter)
+        self.knob_component_layout.addWidget(self.knob_name, 0, Qt.AlignHCenter)
 
 
         self.retranslateUi(KnobComponent)

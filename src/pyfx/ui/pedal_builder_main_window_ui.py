@@ -75,7 +75,7 @@ class Ui_PedalBuilderMainWindow(object):
 
         self.verticalLayout.addLayout(self.pedal_layout)
 
-        self.vertical_spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.vertical_spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
 
         self.verticalLayout.addItem(self.vertical_spacer)
 

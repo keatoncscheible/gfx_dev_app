@@ -7,16 +7,32 @@
     <x>0</x>
     <y>0</y>
     <width>94</width>
-    <height>136</height>
+    <height>158</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Knob Component</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="knob_component_layout">
    <property name="spacing">
     <number>0</number>
    </property>
+   <item>
+    <widget class="QWidget" name="knob_editbox_placeholder" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>22</height>
+      </size>
+     </property>
+    </widget>
+   </item>
    <item alignment="Qt::AlignHCenter">
     <widget class="QLineEdit" name="knob_editbox">
      <property name="sizePolicy">
@@ -30,6 +46,9 @@
        <width>60</width>
        <height>16777215</height>
       </size>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
@@ -90,7 +109,4 @@
  </customwidgets>
  <resources/>
  <connections/>
- <slots>
-  <slot>knob_changed(int)</slot>
- </slots>
 </ui>

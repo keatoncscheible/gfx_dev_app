@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import numpy as np
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QAction, QColor, QContextMenuEvent
-from PySide6.QtWidgets import QDial, QDialog, QMenu, QMessageBox, QWidget
+from PySide6.QtGui import QContextMenuEvent
+from PySide6.QtWidgets import QDial, QDialog, QMenu, QMessageBox, QSizePolicy, QSpacerItem, QWidget
 
 from pyfx.config import KnobConfig
 from pyfx.logging import pyfx_log
@@ -107,10 +107,28 @@ class KnobComponent(QWidget, Ui_KnobComponent):
         self.knob.load_knob_config(knob_config)
         self.knob.knob_changed.connect(self.change_knob)
         self.knob_name.label_changed.connect(self.change_knob_name)
+        self.update_knob_editbox_visibility()
+        self.update_knob_editbox()
+
+    def update_knob_editbox_visibility(self):
+        visible = self.knob_config.display_value
+        self.knob_editbox.setVisible(visible)
+        self.knob_editbox_placeholder.setVisible(not visible)
+
+    def update_knob_editbox(self):
+        precision = self.knob_config.precision
+        round_amount = int(np.log10(1 / precision))
+        value = self.knob_config.value
+        if self.knob_config.mode == "logarithmic":
+            value_db = 20 * np.log10(value)
+            self.knob_editbox.setText(f"{round(value_db, round_amount)} dB")
+        else:
+            self.knob_editbox.setText(f"{round(value, round_amount)}")
 
     def change_knob(self, value: float):
         pyfx_log.debug(f"{self.knob_config.name} changed to {value}")
         self.knob_config.set_value(value)
+        self.update_knob_editbox()
 
     def change_knob_name(self, new_name: str):
         old_name = self.knob_config.name
@@ -141,6 +159,7 @@ class KnobComponent(QWidget, Ui_KnobComponent):
             if dialog_result == QDialog.Accepted:
                 pyfx_log.debug(f"Updating {self.knob_config.name} knob configuration")
                 self.knob.load_knob_config(self.knob_config)
+                self.update_knob_editbox_visibility()
             else:
                 pyfx_log.debug(f"Not updating {self.knob_config.name} knob configuration: {dialog_result}")
 
