@@ -47,18 +47,16 @@ class Ui_PedalWidget(object):
         self.verticalLayout.addWidget(self.pedal_name_label, 0, Qt.AlignHCenter)
 
         self.knob_layout = QGridLayout()
+        self.knob_layout.setSpacing(10)
         self.knob_layout.setObjectName(u"knob_layout")
         self.knob_layout.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.knob_layout.setHorizontalSpacing(10)
-        self.knob_layout.setVerticalSpacing(0)
         self.knob_layout.setContentsMargins(20, 0, 20, 60)
 
         self.verticalLayout.addLayout(self.knob_layout)
 
         self.footswitch_layout = QGridLayout()
+        self.footswitch_layout.setSpacing(10)
         self.footswitch_layout.setObjectName(u"footswitch_layout")
-        self.footswitch_layout.setHorizontalSpacing(10)
-        self.footswitch_layout.setVerticalSpacing(0)
         self.footswitch_layout.setContentsMargins(20, -1, 20, 20)
 
         self.verticalLayout.addLayout(self.footswitch_layout)
