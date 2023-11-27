@@ -96,6 +96,10 @@ class PedalBuilder:
     def open_pedal(self, name: str):
         self.pedal_name = name
         self.pedal_config = self.load_pedal_config()
+        self.pedal_config.add_set_variant_observer(self.set_pedal_variant)
+        self.pedal_config.add_add_variant_observer(self.create_new_pedal_variant)
+        self.pedal_config.add_remove_variant_observer(self.remove_pedal_variant)
+        self.pedal_config.add_change_variant_name_observer(self.change_pedal_variant_name)
         self.pedal = self.load_pedal_module()
         self.update_audio_processor()
         self.update_previous_pedal_file()

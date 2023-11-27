@@ -39,6 +39,22 @@ class KnobConfig(ConfigItem):
         self.display_enabled = display_enabled
         self.value = value
 
+    def __reduce__(self):
+        return (
+            self.__class__,
+            (
+                self.name,
+                self.minimum_value,
+                self.maximum_value,
+                self.default_value,
+                self.precision,
+                self.sensitivity,
+                self.mode,
+                self.display_enabled,
+                self.value,
+            ),
+        )
+
     def set_name(self, name: str):
         if self.name != name:
             self.name = name
@@ -92,6 +108,8 @@ class FootswitchConfig(ConfigItem):
         name: str,
         footswitch_type: str = "latching",
         default_state: bool = True,
+        state: bool = None,
+        mode: Optional[str] = None,
         modes: Optional[list[str]] = None,
         display_enabled: bool = False,
     ):
@@ -99,11 +117,29 @@ class FootswitchConfig(ConfigItem):
         self.name = name
         self.footswitch_type = footswitch_type
         self.default_state = default_state
-        self.state = default_state
+        self.state = default_state if state is None else state
         self.modes = modes
-        self.mode = modes[0] if modes is not None else None
-        self.mode_idx = 0
+        if mode is not None and modes is not None and mode in modes:
+            self.mode = mode
+            self.mode_idx = modes.index(mode)
+        else:
+            self.mode = None
+            self.mode_idx = 0
         self.display_enabled = display_enabled
+
+    def __reduce__(self):
+        return (
+            self.__class__,
+            (
+                self.name,
+                self.footswitch_type,
+                self.default_state,
+                self.state,
+                self.mode,
+                self.modes,
+                self.display_enabled,
+            ),
+        )
 
     def set_name(self, name: str):
         if self.name != name:
@@ -160,8 +196,8 @@ class PedalConfig(ConfigItem):
         name: str,
         knobs: Optional[dict[str, KnobConfig]] = None,
         footswitches: Optional[dict[str, FootswitchConfig]] = None,
-        variants: Optional[list[str]] = None,
         variant: Optional[str] = None,
+        variants: Optional[list[str]] = None,
         pedal_color: str = "#0000FF",
         text_color: str = "#FFFFFF",
     ):
@@ -169,14 +205,28 @@ class PedalConfig(ConfigItem):
         self.name = name
         self.knobs = knobs if knobs is not None else {}
         self.footswitches = footswitches if footswitches is not None else {}
-        self.variants = variants if variants is not None else []
         self.variant = variant
+        self.variants = variants if variants is not None else []
         self.pedal_color = pedal_color
         self.text_color = text_color
         self._set_variant_observers = []
         self._add_variant_observers = []
         self._remove_variant_observers = []
         self._change_variant_name_observers = []
+
+    def __reduce__(self):
+        return (
+            self.__class__,
+            (
+                self.name,
+                self.knobs,
+                self.footswitches,
+                self.variant,
+                self.variants,
+                self.pedal_color,
+                self.text_color,
+            ),
+        )
 
     def set_name(self, name: str):
         if self.name != name:

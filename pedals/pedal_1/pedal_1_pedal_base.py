@@ -13,3 +13,39 @@ class Pedal1PedalBase(PyFxPedal):
     def __init__(self, pedal_config: PedalConfig):
         super().__init__(pedal_config)
 
+    @property
+    def knob_1(self):
+        return self.knobs["Knob 1"].value
+
+    @property
+    def knob_1_min(self):
+        return self.knobs["Knob 1"].minimum_value
+
+    @property
+    def knob_1_max(self):
+        return self.knobs["Knob 1"].maximum_value
+
+    @property
+    def knob_1_default(self):
+        return self.knobs["Knob 1"].default_value
+
+    @property
+    def knob_2(self):
+        return self.knobs["Knob 2"].value
+
+    @property
+    def knob_2_min(self):
+        return self.knobs["Knob 2"].minimum_value
+
+    @property
+    def knob_2_max(self):
+        return self.knobs["Knob 2"].maximum_value
+
+    @property
+    def knob_2_default(self):
+        return self.knobs["Knob 2"].default_value
+
+    @property
+    def footswitch_1(self):
+        return self.footswitches["Footswitch 1"].state
+
