@@ -78,13 +78,11 @@ from pyfx.ui.footswitch_component_ui import Ui_FootswitchComponent
 
 
 class FootswitchComponent(QWidget, Ui_FootswitchComponent):
-    footswitch_name_changed = Signal(str, str)
     remove_footswitch = Signal(object)
 
     def __init__(self, footswitch_config: FootswitchConfig):
         super().__init__()
         self.setupUi(self)
-        self._footswitch_changed_observers = []
         self.footswitch_config = footswitch_config
         self.state = footswitch_config.state
         self.footswitch_name.setText(footswitch_config.name)
@@ -94,19 +92,9 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
         self.footswitch.footswitch_released.connect(self.footswitch_released)
         self.footswitch.footswitch_clicked.connect(self.footswitch_clicked)
         self.footswitch.footswitch_toggled.connect(self.footswitch_toggled)
-        self.footswitch_name.label_changed.connect(self.change_footswitch_name)
+        self.footswitch_name.label_changed.connect(footswitch_config.change_footswitch_name)
         self.update_footswitch_editbox_visibility()
         self.update_footswitch_editbox()
-
-    def add_footswitch_changed_observer(self, observer):
-        self._footswitch_changed_observers.append(observer)
-
-    def remove_footswitch_changed_observer(self, observer):
-        self._footswitch_changed_observers.remove(observer)
-
-    def notify_footswitch_changed_observers(self):
-        for observer in self._footswitch_changed_observers:
-            observer()
 
     def update_footswitch_editbox_visibility(self):
         visible = self.footswitch_config.display_enabled
@@ -133,14 +121,6 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
     def footswitch_toggled(self, state: bool):
         self.update_footswitch_editbox()
 
-    def change_footswitch_name(self, new_name: str):
-        old_name = self.footswitch_config.name
-        if old_name == new_name:
-            return
-        pyfx_log.debug(f"Footswitch name changed from {old_name} to {new_name}")
-        self.footswitch_name_changed.emit(old_name, new_name)
-        self.notify_footswitch_changed_observers()
-
     def contextMenuEvent(self, event):
         context_menu = QMenu(self)
 
@@ -155,7 +135,7 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
         if action == action_remove_footswitch:
             pyfx_log.debug("Remove Footswitch Pressed")
             if self.show_remove_footswitch_prompt(self.footswitch_config.name) == QMessageBox.Yes:
-                self.remove_footswitch.emit(self)
+                self.footswitch_config.remove_footswitch()
         elif action == action_config_footswitch:
             pyfx_log.debug("Configure Footswitch Pressed")
 
@@ -166,7 +146,6 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
                 self.footswitch.load_footswitch_config(self.footswitch_config)
                 self.update_footswitch_editbox_visibility()
                 self.update_footswitch_editbox()
-                self.notify_footswitch_changed_observers()
             else:
                 pyfx_log.debug(f"Not updating {self.footswitch_config.name} footswitch configuration: {dialog_result}")
 

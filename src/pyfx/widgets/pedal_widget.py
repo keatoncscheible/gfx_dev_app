@@ -20,9 +20,17 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         super().__init__()
         self.setupUi(self)
         self.pedal_config = pedal_config
+        self.pedal_config.add_change_pedal_name_observer(self.set_pedal_name)
+        self.pedal_config.add_add_knob_observer(self.add_knob)
+        self.pedal_config.add_remove_knob_observer(self.remove_knob)
+        self.pedal_config.add_add_footswitch_observer(self.add_footswitch)
+        self.pedal_config.add_remove_footswitch_observer(self.remove_footswitch)
+        self.pedal_config.add_set_pedal_color_observer(self.set_pedal_color)
+        self.pedal_config.add_set_text_color_observer(self.set_text_color)
+        self.pedal_name_label.label_changed.connect(self.pedal_config.change_pedal_name)
+
         self.knob_widgets: list[KnobComponent] = []
         self.footswitch_widgets: list[FootswitchComponent] = []
-        self._pedal_widget_changed_observers = []
 
         for knob_config in pedal_config.knobs.values():
             self.add_knob(knob_config)
@@ -31,19 +39,8 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             self.add_footswitch(footswitch_config)
 
         self.set_pedal_name(self.pedal_config.name)
-        self.set_pedal_color(QColor(self.pedal_config.pedal_color))
-        self.set_text_color(QColor(self.pedal_config.text_color))
-        self.pedal_name_label.label_changed.connect(self.set_pedal_name)
-
-    def add_pedal_widget_changed_observer(self, observer):
-        self._pedal_widget_changed_observers.append(observer)
-
-    def remove_pedal_widget_changed_observer(self, observer):
-        self._pedal_widget_changed_observers.remove(observer)
-
-    def notify_pedal_widget_changed_observers(self):
-        for observer in self._pedal_widget_changed_observers:
-            observer()
+        self.set_pedal_color(self.pedal_config.pedal_color)
+        self.set_text_color(self.pedal_config.text_color)
 
     def contextMenuEvent(self, event):
         context_menu = QMenu(self)
@@ -105,9 +102,11 @@ class PedalWidget(QFrame, Ui_PedalWidget):
 
         # Handle actions
         if action == add_knob_action:
-            self.add_knob()
+            knob_name = self.generate_knob_name()
+            self.pedal_config.add_knob(knob_name)
         elif action == add_footswitch_action:
-            self.add_footswitch()
+            footswitch_name = self.generate_footswitch_name()
+            self.pedal_config.add_footswitch(footswitch_name)
         elif action == create_new_variant_action:
             pyfx_log.debug("Create New Variant Pressed")
             dialog = NewPedalVariantDialog()
@@ -119,19 +118,18 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         elif action == change_pedal_color_action:
             pyfx_log.debug("Change Pedal Color Pressed")
             color = QColorDialog.getColor()
-            self.set_pedal_color(color)
+            self.pedal_config.set_pedal_color(color.name())
         elif action == change_text_color_action:
             pyfx_log.debug("Change Pedal Color Pressed")
             color = QColorDialog.getColor()
-            self.set_text_color(color)
+            self.pedal_config.set_text_color(color.name())
 
     def set_pedal_name(self, name: str):
         pyfx_log.debug(f"Pedal name changed from {self.pedal_config.name} to {name}")
         self.pedal_name_label.setText(name)
-        self.pedal_config.set_name(name)
-        self.notify_pedal_widget_changed_observers()
 
-    def set_pedal_color(self, color: QColor):
+    def set_pedal_color(self, color: str):
+        color = QColor(color)
         light_pedal_color, dark_pedal_color = calculate_color_gradient(color, 0.5, 0.5)
 
         self.setObjectName("pedal")
@@ -143,9 +141,9 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             }}
         """
         self.setStyleSheet(style_sheet)
-        self.pedal_config.set_pedal_color(color.name())
 
-    def set_text_color(self, color: QColor):
+    def set_text_color(self, color: str):
+        color = QColor(color)
         style_sheet = f"""
             color: {color.name()};
         """
@@ -154,7 +152,6 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             knob_widget.knob_name.setStyleSheet(style_sheet)
         for footswitch_widget in self.footswitch_widgets:
             footswitch_widget.footswitch_name.setStyleSheet(style_sheet)
-        self.pedal_config.set_text_color(color.name())
 
     def generate_knob_name(self):
         knob_idx = 1
@@ -172,53 +169,33 @@ class PedalWidget(QFrame, Ui_PedalWidget):
                 return footswitch_name
             footswitch_idx += 1
 
-    def add_knob(self, knob_config: KnobConfig = None):
-        if knob_config is None:
-            knob_name = self.generate_knob_name()
-            self.pedal_config.add_knob(knob_name)
-            knob_config = self.pedal_config.knobs[knob_name]
+    def add_knob(self, knob_config: KnobConfig):
+        knob_config.add_remove_knob_observer(self.remove_knob)
         knob_widget = KnobComponent(knob_config=knob_config)
-        knob_widget.add_knob_changed_observer(self.notify_pedal_widget_changed_observers)
         self.knob_widgets.append(knob_widget)
-        knob_widget.knob_name_changed.connect(self.pedal_config.change_knob_name)
-        knob_widget.remove_knob.connect(self.remove_knob)
         knob_cnt = len(self.knob_widgets)
         row = int((knob_cnt - 1) / self.max_knob_columns)
         column = (knob_cnt - 1) % self.max_knob_columns
         self.knob_layout.addWidget(knob_widget, row, column)
-        self.notify_pedal_widget_changed_observers()
 
     def remove_knob(self, knob_widget: KnobComponent):
-        knob_widget.remove_knob_changed_observer(self.notify_pedal_widget_changed_observers)
         self.knob_widgets.remove(knob_widget)
-        self.pedal_config.remove_knob(knob_widget.knob_config.name)
         self.knob_layout.removeWidget(knob_widget)
         knob_widget.deleteLater()
-        self.notify_pedal_widget_changed_observers()
 
     def add_footswitch(self, footswitch_config: FootswitchConfig = None):
-        if footswitch_config is None:
-            footswitch_name = self.generate_footswitch_name()
-            self.pedal_config.add_footswitch(footswitch_name)
-            footswitch_config = self.pedal_config.footswitches[footswitch_name]
+        footswitch_config.add_remove_footswitch_observer(self.remove_footswitch)
         footswitch_widget = FootswitchComponent(footswitch_config=footswitch_config)
-        footswitch_widget.add_footswitch_changed_observer(self.notify_pedal_widget_changed_observers)
         self.footswitch_widgets.append(footswitch_widget)
-        footswitch_widget.footswitch_name_changed.connect(self.pedal_config.change_footswitch_name)
-        footswitch_widget.remove_footswitch.connect(self.remove_footswitch)
         footswitch_cnt = len(self.footswitch_widgets)
         row = int((footswitch_cnt - 1) / self.max_footswitch_columns)
         column = (footswitch_cnt - 1) % self.max_footswitch_columns
         self.footswitch_layout.addWidget(footswitch_widget, row, column)
-        self.notify_pedal_widget_changed_observers()
 
     def remove_footswitch(self, footswitch_widget: FootswitchComponent):
-        footswitch_widget.remove_footswitch_changed_observer(self.notify_pedal_widget_changed_observers)
         self.footswitch_widgets.remove(footswitch_widget)
-        self.pedal_config.remove_footswitch(footswitch_widget.footswitch_config.name)
         self.footswitch_layout.removeWidget(footswitch_widget)
         footswitch_widget.deleteLater()
-        self.notify_pedal_widget_changed_observers()
 
     def hide_all_knob_displays(self):
         for knob_widget in self.knob_widgets:

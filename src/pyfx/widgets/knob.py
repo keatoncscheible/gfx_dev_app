@@ -10,8 +10,6 @@ from pyfx.logging import pyfx_log
 
 
 class Knob(QDial):
-    knob_changed = Signal(float)
-
     def __init__(self, parent):
         super().__init__(parent)
         self.minimum_value = None
@@ -28,6 +26,7 @@ class Knob(QDial):
 
     def load_knob_config(self, knob_config: KnobConfig):
         pyfx_log.debug(f"Loading knob config: {knob_config.name}")
+        self.knob_config = knob_config
         self.minimum_value = knob_config.minimum_value
         self.maximum_value = knob_config.maximum_value
         self.precision = knob_config.precision
@@ -57,7 +56,7 @@ class Knob(QDial):
             float_value = value * self.precision
         else:  # logarithmic
             float_value = 10 ** (value * self.precision / 20)
-        self.knob_changed.emit(float_value)
+        self.knob_config.set_value(float_value)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
@@ -95,31 +94,16 @@ from pyfx.ui.knob_component_ui import Ui_KnobComponent
 
 
 class KnobComponent(QWidget, Ui_KnobComponent):
-    knob_name_changed = Signal(str, str)
-    remove_knob = Signal(object)
-
     def __init__(self, knob_config: KnobConfig):
         super().__init__()
         self.setupUi(self)
-        self._knob_changed_observers = []
         self.knob_config = knob_config
         self.knob_name.setText(knob_config.name)
         self.knob_name.setStyleSheet("color: #ffffff;")
         self.knob.load_knob_config(knob_config)
-        self.knob.knob_changed.connect(self.change_knob)
-        self.knob_name.label_changed.connect(self.change_knob_name)
+        self.knob_name.label_changed.connect(knob_config.change_knob_name)
         self.update_knob_editbox_visibility()
         self.update_knob_editbox()
-
-    def add_knob_changed_observer(self, observer):
-        self._knob_changed_observers.append(observer)
-
-    def remove_knob_changed_observer(self, observer):
-        self._knob_changed_observers.remove(observer)
-
-    def notify_knob_changed_observers(self):
-        for observer in self._knob_changed_observers:
-            observer()
 
     def update_knob_editbox_visibility(self):
         visible = self.knob_config.display_enabled
@@ -142,15 +126,7 @@ class KnobComponent(QWidget, Ui_KnobComponent):
         self.update_knob_editbox()
 
     def change_knob_name(self, new_name: str):
-        old_name = self.knob_config.name
-        if old_name == new_name:
-            return
-        pyfx_log.debug(f"Knob name changed from {old_name} to {new_name}")
-        self.knob_name_changed.emit(old_name, new_name)
-        self.notify_knob_changed_observers()
-
-    def remove_knob_cb(self):
-        self.remove_knob.emit(self)
+        self.knob_config.chan(new_name)
 
     def contextMenuEvent(self, event):
         context_menu = QMenu(self)
@@ -178,7 +154,7 @@ class KnobComponent(QWidget, Ui_KnobComponent):
         elif action == action_remove_knob:
             pyfx_log.debug("Remove Knob Pressed")
             if self.show_remove_knob_prompt(self.knob_config.name) == QMessageBox.Yes:
-                self.remove_knob.emit(self)
+                self.knob_config.remove_knob()
 
     def show_remove_knob_prompt(self, name: str):
         return QMessageBox.question(

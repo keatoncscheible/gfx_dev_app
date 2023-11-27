@@ -25,6 +25,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.pedal_builder = pedal_builder
         self.audio_processor = audio_processor
         if pedal_builder.pedal_config is not None:
+            self.pedal_config = self.pedal_builder.pedal_config
             self.pedal_widget = PedalWidget(pedal_config=self.pedal_builder.pedal_config)
             self.pedal_layout.insertWidget(1, self.pedal_widget)
             all_knobs_displays_enabled = all(
@@ -82,11 +83,13 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
 
     def pedal__add_knob_cb(self):
         pyfx_log.debug("Pedal->Add Knob pressed")
-        self.pedal_widget.add_knob()
+        knob_name = self.pedal_widget.generate_knob_name()
+        self.pedal_config.add_knob(knob_name)
 
     def pedal__add_footswitch_cb(self):
         pyfx_log.debug("Pedal->Add Footswitch pressed")
-        self.pedal_widget.add_footswitch()
+        footswitch_name = self.pedal_widget.generate_footswitch_name()
+        self.pedal_config.add_footswitch(footswitch_name)
 
     """View Menu Callbacks"""
 
@@ -150,8 +153,8 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
     def new_pedal(self):
         self.close_pedal()
         self.pedal_builder.create_new_pedal()
+        self.pedal_config = self.pedal_builder.pedal_config
         self.pedal_widget = PedalWidget(pedal_config=self.pedal_builder.pedal_config)
-        self.pedal_widget.add_pedal_widget_changed_observer(self.pedal_builder.generate_pedal_module)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
         self.adjust_and_center()
 
@@ -160,13 +163,11 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.close_pedal()
         self.pedal_builder.open_pedal(name)
         self.pedal_widget = PedalWidget(pedal_config=self.pedal_builder.pedal_config)
-        self.pedal_widget.add_pedal_widget_changed_observer(self.pedal_builder.generate_pedal_module)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
         self.adjust_and_center()
 
     def close_pedal(self):
         if self.pedal_widget:
-            self.pedal_widget.remove_pedal_widget_changed_observer(self.pedal_builder.generate_pedal_module)
             self.pedal_builder.close_pedal()
             self.pedal_layout.removeWidget(self.pedal_widget)
             self.pedal_widget.hide()

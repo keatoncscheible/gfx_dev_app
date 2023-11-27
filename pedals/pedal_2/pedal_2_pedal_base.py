@@ -7,8 +7,8 @@ from pyfx.config import PedalConfig
 from pyfx.pedal import PyFxPedal
 
 
-class Pedal1PedalBase(PyFxPedal):
-    """Pedal 1 Class"""
+class Pedal2PedalBase(PyFxPedal):
+    """Pedal 2 Class"""
 
     def __init__(self, pedal_config: PedalConfig):
         super().__init__(pedal_config)
