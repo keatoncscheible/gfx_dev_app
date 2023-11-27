@@ -115,13 +115,22 @@ class KnobConfig(ConfigItem):
             self.notify_change_knob_name_observers(old_name, new_name)
 
     def add_change_knob_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_knob_name_observers.append(observer)
 
     def remove_change_knob_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_knob_name_observers.remove(observer)
 
     def notify_change_knob_name_observers(self, old_name: str, new_name: str):
         for observer in self._change_knob_name_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(old_name, new_name)
 
     """Remove Knob"""
@@ -131,13 +140,22 @@ class KnobConfig(ConfigItem):
         self.notify_remove_knob_observers()
 
     def add_remove_knob_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} knob remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._remove_knob_observers.append(observer)
 
     def remove_remove_knob_observer(self, observer):
-        self._remove_knob_observers.remov(observer)
+        pyfx_log.debug(
+            f"Removing {self.name} knob remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
+        self._remove_knob_observers.remove(observer)
 
     def notify_remove_knob_observers(self):
         for observer in self._remove_knob_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} knob remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(self)
 
 
@@ -244,13 +262,22 @@ class FootswitchConfig(ConfigItem):
             pyfx_log.debug(f"Footswitch name changed from {old_name} to {new_name}")
 
     def add_change_footswitch_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_footswitch_name_observers.append(observer)
 
     def remove_change_footswitch_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_footswitch_name_observers.remove(observer)
 
     def notify_change_footswitch_name_observers(self, old_name: str, new_name: str):
         for observer in self._change_footswitch_name_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(old_name, new_name)
 
     """Remove Footswitch"""
@@ -260,13 +287,22 @@ class FootswitchConfig(ConfigItem):
         self.notify_remove_footswitch_observers()
 
     def add_remove_footswitch_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._remove_footswitch_observers.append(observer)
 
     def remove_remove_footswitch_observer(self, observer):
-        self._remove_footswitch_observers.remov(observer)
+        pyfx_log.debug(
+            f"Removing {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
+        self._remove_footswitch_observers.remove(observer)
 
     def notify_remove_footswitch_observers(self):
         for observer in self._remove_footswitch_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(self)
 
 
@@ -283,8 +319,6 @@ class PedalConfig(ConfigItem):
     ):
         super().__init__()
         self.name = name
-        self.knobs = knobs if knobs is not None else {}
-        self.footswitches = footswitches if footswitches is not None else {}
         self.variant = variant
         self.variants = variants if variants is not None else []
         self.pedal_color = pedal_color
@@ -302,6 +336,16 @@ class PedalConfig(ConfigItem):
         self._change_variant_name_observers = []
         self._set_pedal_color_observers = []
         self._set_text_color_observers = []
+
+        self.knobs = {}
+        if knobs:
+            for knob in knobs.values():
+                self.add_knob(knob.name)
+
+        self.footswitches = {}
+        if footswitches:
+            for footswitch in footswitches.values():
+                self.add_footswitch(footswitch.name)
 
     def __reduce__(self):
         return (
@@ -328,13 +372,22 @@ class PedalConfig(ConfigItem):
             self.notify_change_pedal_name_observers(old_name, new_name)
 
     def add_change_pedal_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal change pedal name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_pedal_name_observers.append(observer)
 
     def remove_change_pedal_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal change pedal name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_pedal_name_observers.remove(observer)
 
     def notify_change_pedal_name_observers(self, old_name: str, new_name: str):
         for observer in self._change_pedal_name_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal change pedal name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(old_name, new_name)
 
     """Add Knob"""
@@ -350,13 +403,22 @@ class PedalConfig(ConfigItem):
         self.notify_add_knob_observers(knob_config)
 
     def add_add_knob_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal add knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._add_knob_observers.append(observer)
 
     def remove_add_knob_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal add knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._add_knob_observers.remove(observer)
 
     def notify_add_knob_observers(self, knob_config: KnobConfig):
         for observer in self._add_knob_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal add knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(knob_config)
 
     """Remove Knob"""
@@ -371,13 +433,22 @@ class PedalConfig(ConfigItem):
         self.notify_remove_knob_observers(knob_config)
 
     def add_remove_knob_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._remove_knob_observers.append(observer)
 
     def remove_remove_knob_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._remove_knob_observers.remove(observer)
 
     def notify_remove_knob_observers(self, knob_config: KnobConfig):
         for observer in self._remove_knob_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(knob_config)
 
     """Change Knob Name"""
@@ -390,13 +461,22 @@ class PedalConfig(ConfigItem):
         self.notify_change_knob_name_observers(old_name, new_name)
 
     def add_change_knob_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_knob_name_observers.append(observer)
 
     def remove_change_knob_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_knob_name_observers.remove(observer)
 
     def notify_change_knob_name_observers(self, old_name: str, new_name: str):
         for observer in self._change_knob_name_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(old_name, new_name)
 
     """Add Footswitch"""
@@ -412,13 +492,22 @@ class PedalConfig(ConfigItem):
         self.notify_add_footswitch_observers(footswitch_config)
 
     def add_add_footswitch_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal add footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._add_footswitch_observers.append(observer)
 
     def remove_add_footswitch_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal add footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._add_footswitch_observers.remove(observer)
 
     def notify_add_footswitch_observers(self, footswitch_config: FootswitchConfig):
         for observer in self._add_footswitch_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal add footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(footswitch_config)
 
     """Remove Footswitch"""
@@ -433,13 +522,22 @@ class PedalConfig(ConfigItem):
         self.notify_remove_footswitch_observers(footswitch_config)
 
     def add_remove_footswitch_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._remove_footswitch_observers.append(observer)
 
     def remove_remove_footswitch_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._remove_footswitch_observers.remove(observer)
 
     def notify_remove_footswitch_observers(self, footswitch_config: FootswitchConfig):
         for observer in self._remove_footswitch_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(footswitch_config)
 
     """Change Footswitch Name"""
@@ -452,13 +550,22 @@ class PedalConfig(ConfigItem):
         self.notify_change_footswitch_name_observers(old_name, new_name)
 
     def add_change_footswitch_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_footswitch_name_observers.append(observer)
 
     def remove_change_footswitch_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_footswitch_name_observers.remove(observer)
 
     def notify_change_footswitch_name_observers(self, old_name: str, new_name: str):
         for observer in self._change_footswitch_name_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(old_name, new_name)
 
     """Set Variant"""
@@ -471,13 +578,22 @@ class PedalConfig(ConfigItem):
             self.notify_set_variant_observers(name)
 
     def add_set_variant_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal set variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._set_variant_observers.append(observer)
 
     def remove_set_variant_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal set variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._set_variant_observers.remove(observer)
 
     def notify_set_variant_observers(self, name: str):
         for observer in self._set_variant_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal set variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(name)
 
     """Add Variant"""
@@ -491,13 +607,22 @@ class PedalConfig(ConfigItem):
             self.modified = True
 
     def add_add_variant_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal add variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._add_variant_observers.append(observer)
 
     def remove_add_variant_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal add variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._add_variant_observers.remove(observer)
 
     def notify_add_variant_observers(self, name: str):
         for observer in self._add_variant_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal add variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(name)
 
     """Remove Variant"""
@@ -512,13 +637,22 @@ class PedalConfig(ConfigItem):
             self.notify_remove_variant_observers(name)
 
     def add_remove_variant_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal remove variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._remove_variant_observers.append(observer)
 
     def remove_remove_variant_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal remove variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._remove_variant_observers.remove(observer)
 
     def notify_remove_variant_observers(self, name: str):
         for observer in self._remove_variant_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal remove variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(name)
 
     """Change Variant Name"""
@@ -532,13 +666,22 @@ class PedalConfig(ConfigItem):
             self.notify_change_variant_name_observers(old_name, new_name)
 
     def add_change_variant_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal change variant name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_variant_name_observers.append(observer)
 
     def remove_change_variant_name_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal change variant name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._change_variant_name_observers.remove(observer)
 
     def notify_change_variant_name_observers(self, old_name: str, new_name: str):
         for observer in self._change_variant_name_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal change variant name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(old_name, new_name)
 
     """Set Pedal Color"""
@@ -551,13 +694,22 @@ class PedalConfig(ConfigItem):
             self.notify_set_pedal_color_observers(pedal_color)
 
     def add_set_pedal_color_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal set pedal color observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._set_pedal_color_observers.append(observer)
 
     def remove_set_pedal_color_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal set pedal color observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._set_pedal_color_observers.remove(observer)
 
     def notify_set_pedal_color_observers(self, pedal_color: str):
         for observer in self._set_pedal_color_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal set pedal color observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(pedal_color)
 
     """Set Text Color"""
@@ -570,13 +722,22 @@ class PedalConfig(ConfigItem):
             self.notify_set_text_color_observers(text_color)
 
     def add_set_text_color_observer(self, observer):
+        pyfx_log.debug(
+            f"Adding {self.name} pedal set text color observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._set_text_color_observers.append(observer)
 
     def remove_set_text_color_observer(self, observer):
+        pyfx_log.debug(
+            f"Removing {self.name} pedal set text color observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+        )
         self._set_text_color_observers.remove(observer)
 
     def notify_set_text_color_observers(self, text_color: str):
         for observer in self._set_text_color_observers:
+            pyfx_log.debug(
+                f"Calling {self.name} pedal set text color observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            )
             observer(text_color)
 
     @property

@@ -1,10 +1,10 @@
 import numpy as np
-from pedal_2_pedal_base import Pedal2PedalBase
+from pedal_4_pedal_base import Pedal4PedalBase
 
 
-class V1Pedal2Pedal(Pedal2PedalBase):
+class V1Pedal4Pedal(Pedal4PedalBase):
     def process_audio(self, data: np.ndarray):
-        """V1 Pedal 2 Processing"""
+        """V1 Pedal 4 Processing"""
 
         # TODO: Replace this line with your processing code
         processed_data = data
