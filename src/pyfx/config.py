@@ -13,17 +13,6 @@ from pyfx.exceptions import (
 class ConfigItem:
     def __init__(self):
         self.modified = True
-        self._observers = []
-
-    def add_observer(self, observer):
-        self._observers.append(observer)
-
-    def remove_observer(self, observer):
-        self._observers.remove(observer)
-
-    def notify_observers(self):
-        for observer in self._observers:
-            observer()
 
 
 class KnobConfig(ConfigItem):
@@ -50,60 +39,51 @@ class KnobConfig(ConfigItem):
         self.display_enabled = display_enabled
         self.value = value
 
-    def set_name(self, value: str):
-        if self.name != value:
-            self.name = value
+    def set_name(self, name: str):
+        if self.name != name:
+            self.name = name
             self.modified = True
-            self.notify_observers()
 
     def set_minimum_value(self, value: float):
         if self.minimum_value != value:
             self.minimum_value = value
             self.modified = True
-            self.notify_observers()
 
     def set_maximum_value(self, value: float):
         if self.maximum_value != value:
             self.maximum_value = value
             self.modified = True
-            self.notify_observers()
 
     def set_default_value(self, value: float):
         if self.default_value != value:
             self.default_value = value
             self.modified = True
-            self.notify_observers()
 
-    def set_precision(self, value: float):
-        if self.precision != value:
-            self.precision = value
+    def set_precision(self, precision: float):
+        if self.precision != precision:
+            self.precision = precision
             self.modified = True
-            self.notify_observers()
 
-    def set_sensitivity(self, value: float):
-        if self.sensitivity != value:
-            self.sensitivity = value
+    def set_sensitivity(self, sensitivity: float):
+        if self.sensitivity != sensitivity:
+            self.sensitivity = sensitivity
             self.modified = True
-            self.notify_observers()
 
     def set_mode(self, value: str):
         if self.mode != value:
             self.mode = value
             self.value = self.default_value
             self.modified = True
-            self.notify_observers()
 
-    def set_display_enabled(self, value: bool):
-        if self.display_enabled != value:
-            self.display_enabled = value
+    def set_display_enabled(self, enable: bool):
+        if self.display_enabled != enable:
+            self.display_enabled = enable
             self.modified = True
-            self.notify_observers()
 
     def set_value(self, value):
         if self.value != value:
             self.value = value
             self.modified = True
-            self.notify_observers()
 
 
 class FootswitchConfig(ConfigItem):
@@ -125,60 +105,53 @@ class FootswitchConfig(ConfigItem):
         self.mode_idx = 0
         self.display_enabled = display_enabled
 
-    def set_name(self, value: str):
-        if self.name != value:
-            self.name = value
+    def set_name(self, name: str):
+        if self.name != name:
+            self.name = name
             self.modified = True
-            self.notify_observers()
 
-    def set_footswitch_type(self, value: str):
+    def set_footswitch_type(self, footswitch_type: str):
         valid_footswitch_types = ["latching", "momentary", "mode"]
-        if value not in valid_footswitch_types:
-            msg = f"{value} is an invalid footswitch type. Valid types are {valid_footswitch_types}"
+        if footswitch_type not in valid_footswitch_types:
+            msg = f"{footswitch_type} is an invalid footswitch type. Valid types are {valid_footswitch_types}"
             raise ValueError(msg)
-        if self.footswitch_type != value:
-            self.footswitch_type = value
+        if self.footswitch_type != footswitch_type:
+            self.footswitch_type = footswitch_type
             self.modified = True
-            self.notify_observers()
 
-    def set_default_state(self, value: bool):
-        if self.default_state != value:
-            self.default_state = value
+    def set_default_state(self, state: bool):
+        if self.default_state != state:
+            self.default_state = state
             self.modified = True
-            self.notify_observers()
 
-    def set_state(self, value: bool):
-        if self.state != value:
-            self.state = value
+    def set_state(self, state: bool):
+        if self.state != state:
+            self.state = state
             self.modified = True
-            self.notify_observers()
 
-    def set_modes(self, value: list[str]):
-        if self.modes != value:
-            self.modes = value
+    def set_modes(self, modes: list[str]):
+        if self.modes != modes:
+            self.modes = modes
             try:
                 self.mode = self.modes[0]
                 self.mode_idx = 0
             except TypeError:
                 self.mode = None
             self.modified = True
-            self.notify_observers()
 
-    def set_mode(self, value: str):
-        if self.mode != value:
-            self.mode = value
+    def set_mode(self, mode: str):
+        if self.mode != mode:
+            self.mode = mode
             self.modified = True
-            self.notify_observers()
 
     def next_mode(self):
         self.mode_idx = (self.mode_idx + 1) % len(self.modes)
         self.set_mode(self.modes[self.mode_idx])
 
-    def set_display_enabled(self, value: bool):
-        if self.display_enabled != value:
-            self.display_enabled = value
+    def set_display_enabled(self, enable: bool):
+        if self.display_enabled != enable:
+            self.display_enabled = enable
             self.modified = True
-            self.notify_observers()
 
 
 class PedalConfig(ConfigItem):
@@ -200,26 +173,27 @@ class PedalConfig(ConfigItem):
         self.variant = variant
         self.pedal_color = pedal_color
         self.text_color = text_color
+        self._set_variant_observers = []
+        self._add_variant_observers = []
+        self._remove_variant_observers = []
+        self._change_variant_name_observers = []
 
-    def set_name(self, value: str):
-        if self.name != value:
-            self.name = value
+    def set_name(self, name: str):
+        if self.name != name:
+            self.name = name
             self.modified = True
-            self.notify_observers()
 
     def add_knob(self, name: str):
         if name in self.knobs:
             raise KnobAlreadyExistsException()
         self.knobs[name] = KnobConfig(name)
         self.modified = True
-        self.notify_observers()
 
     def remove_knob(self, name: str):
         if name not in self.knobs:
             raise KnobDoesNotExistException()
         del self.knobs[name]
         self.modified = True
-        self.notify_observers()
 
     def change_knob_name(self, old_name: str, new_name: str):
         self.knobs[new_name] = self.knobs[old_name]
@@ -232,14 +206,12 @@ class PedalConfig(ConfigItem):
             raise FootswitchAlreadyExistsException()
         self.footswitches[name] = FootswitchConfig(name)
         self.modified = True
-        self.notify_observers()
 
     def remove_footswitch(self, name: str):
         if name not in self.footswitches:
             raise FootswitchDoesNotExistException()
         del self.footswitches[name]
         self.modified = True
-        self.notify_observers()
 
     def change_footswitch_name(self, old_name: str, new_name: str):
         self.footswitches[new_name] = self.footswitches[old_name]
@@ -247,26 +219,73 @@ class PedalConfig(ConfigItem):
         del self.footswitches[old_name]
         self.modified = True
 
-    def set_variant(self, value: str):
-        if self.variant != value:
-            self.variant = value
+    def set_variant(self, name: str):
+        if self.variant != name:
+            self.variant = name
             self.modified = True
-            self.notify_observers()
+            self.notify_set_variant_observers(name)
 
-    def add_variant(self, value: str):
-        if value not in self.variants:
-            self.variants.append(value)
-            self.variant = value
+    def add_set_variant_observer(self, observer):
+        self._set_variant_observers.append(observer)
+
+    def remove_set_variant_observer(self, observer):
+        self._set_variant_observers.remove(observer)
+
+    def notify_set_variant_observers(self, name: str):
+        for observer in self._set_variant_observers:
+            observer(name)
+
+    def add_variant(self, name: str):
+        if name not in self.variants:
+            self.variants.append(name)
+            self.notify_add_variant_observers(name)
+            self.set_variant(name)
             self.modified = True
-            self.notify_observers()
 
-    def remove_variant(self, value: str):
-        if value in self.variants:
-            self.variants.remove(value)
-            if self.variant == value:
+    def add_add_variant_observer(self, observer):
+        self._add_variant_observers.append(observer)
+
+    def remove_add_variant_observer(self, observer):
+        self._add_variant_observers.remove(observer)
+
+    def notify_add_variant_observers(self, name: str):
+        for observer in self._add_variant_observers:
+            observer(name)
+
+    def remove_variant(self, name: str):
+        if name in self.variants:
+            self.variants.remove(name)
+            if self.variant == name:
                 self.variant = None
             self.modified = True
-            self.notify_observers()
+            self.notify_remove_variant_observers(name)
+
+    def add_remove_variant_observer(self, observer):
+        self._remove_variant_observers.append(observer)
+
+    def remove_remove_variant_observer(self, observer):
+        self._remove_variant_observers.remove(observer)
+
+    def notify_remove_variant_observers(self, name: str):
+        for observer in self._remove_variant_observers:
+            observer(name)
+
+    def change_variant_name(self, old_name, new_name: str):
+        if old_name in self.variants:
+            self.variants = [new_name if variant == old_name else variant for variant in self.variants]
+            if self.variant == old_name:
+                self.variant = new_name
+            self.notify_change_variant_name_observers(old_name, new_name)
+
+    def add_change_variant_name_observer(self, observer):
+        self._change_variant_name_observers.append(observer)
+
+    def remove_change_variant_name_observer(self, observer):
+        self._change_variant_name_observers.remove(observer)
+
+    def notify_change_variant_name_observers(self, old_name: str, new_name: str):
+        for observer in self._change_variant_name_observers:
+            observer(old_name, new_name)
 
     def set_pedal_color(self, value: QColor):
         if self.pedal_color != value:

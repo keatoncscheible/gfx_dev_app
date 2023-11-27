@@ -1,7 +1,7 @@
 from functools import partial
 
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QColorDialog, QDialog, QFrame, QMenu, QMessageBox
+from PySide6.QtWidgets import QColorDialog, QDialog, QFrame, QInputDialog, QMenu, QMessageBox
 
 from pyfx.config import FootswitchConfig, KnobConfig, PedalConfig
 from pyfx.logging import pyfx_log
@@ -58,6 +58,7 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         if variants:
             select_variant_menu = context_menu.addMenu("Select Variant")
             remove_variant_menu = context_menu.addMenu("Remove Variant")
+            change_variant_name_menu = context_menu.addMenu("Change Variant Name")
         context_menu.addSeparator()
         change_pedal_color_action = context_menu.addAction("Change Pedal Color")
         change_text_color_action = context_menu.addAction("Change Text Color")
@@ -82,6 +83,13 @@ class PedalWidget(QFrame, Ui_PedalWidget):
                 pyfx_log.debug(f"Variant {variant} removed")
                 self.pedal_config.remove_variant(variant)
 
+        def variant_name_changed(variant):
+            new_variant, ok = QInputDialog.getText(None, "Input New Variant", "New Variant Name:")
+            if not ok or not new_variant:
+                return None
+            pyfx_log.debug(f"Variant name changed from {variant} to {new_variant}")
+            self.pedal_config.change_variant_name(variant, new_variant)
+
         for variant in self.pedal_config.variants:
             select_variant_action = select_variant_menu.addAction(variant)
             select_variant_action.setCheckable(True)
@@ -89,6 +97,8 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             select_variant_action.triggered.connect(partial(variant_selected, variant))
             remove_variant_action = remove_variant_menu.addAction(variant)
             remove_variant_action.triggered.connect(partial(variant_removed, variant))
+            change_variant_name_action = change_variant_name_menu.addAction(variant)
+            change_variant_name_action.triggered.connect(partial(variant_name_changed, variant))
 
         # Show the context menu at the cursor position
         action = context_menu.exec(event.globalPos())

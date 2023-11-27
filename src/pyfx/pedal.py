@@ -1,7 +1,9 @@
+from abc import ABC, abstractmethod
+
 from pyfx.config import PedalConfig
 
 
-class PyFxPedal:
+class PyFxPedal(ABC):
     def __init__(self, pedal_config: PedalConfig):
         self.pedal_config = pedal_config
 
@@ -16,3 +18,7 @@ class PyFxPedal:
     @property
     def footswitches(self):
         return self.pedal_config.footswitches
+
+    # @abstractmethod
+    # def process_audio(self, data):
+    #     """Abstract Process Audio Callback"""
