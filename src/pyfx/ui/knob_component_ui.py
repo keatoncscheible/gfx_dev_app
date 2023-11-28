@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QLineEdit, QSizePolicy, QVBoxLayout
     QWidget)
 
 from pyfx.widgets.editable_label_widget import EditableLabelWidget
-from pyfx.widgets.knob import KnobWidget
+from pyfx.widgets.knob_widget import KnobWidget
 
 class Ui_KnobComponent(object):
     def setupUi(self, KnobComponent):
