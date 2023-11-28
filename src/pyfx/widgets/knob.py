@@ -9,7 +9,7 @@ from pyfx.config import KnobConfig
 from pyfx.logging import pyfx_log
 
 
-class Knob(QDial):
+class KnobWidget(QDial):
     def __init__(self, parent):
         super().__init__(parent)
         self.minimum_value = None

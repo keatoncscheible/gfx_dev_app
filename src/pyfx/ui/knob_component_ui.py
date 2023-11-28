@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QLineEdit, QSizePolicy, QVBoxLayout
     QWidget)
 
 from pyfx.widgets.editable_label_widget import EditableLabelWidget
-from pyfx.widgets.knob import Knob
+from pyfx.widgets.knob import KnobWidget
 
 class Ui_KnobComponent(object):
     def setupUi(self, KnobComponent):
@@ -52,7 +52,7 @@ class Ui_KnobComponent(object):
 
         self.knob_component_layout.addWidget(self.knob_editbox, 0, Qt.AlignHCenter)
 
-        self.knob = Knob(KnobComponent)
+        self.knob = KnobWidget(KnobComponent)
         self.knob.setObjectName(u"knob")
         sizePolicy.setHeightForWidth(self.knob.sizePolicy().hasHeightForWidth())
         self.knob.setSizePolicy(sizePolicy)
