@@ -47,6 +47,7 @@ class Ui_FootswitchComponent(object):
         sizePolicy.setHeightForWidth(self.footswitch_editbox.sizePolicy().hasHeightForWidth())
         self.footswitch_editbox.setSizePolicy(sizePolicy)
         self.footswitch_editbox.setMaximumSize(QSize(60, 16777215))
+        self.footswitch_editbox.setFrame(False)
         self.footswitch_editbox.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.footswitch_editbox, 0, Qt.AlignHCenter)
