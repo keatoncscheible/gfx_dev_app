@@ -7,7 +7,7 @@ from pyfx.config import FootswitchConfig, KnobConfig, PedalConfig
 from pyfx.logging import pyfx_log
 from pyfx.ui.pedal_widget_ui import Ui_PedalWidget
 from pyfx.utils.color_utils import calculate_color_gradient
-from pyfx.widgets.footswitch import FootswitchComponent
+from pyfx.widgets.footswitch_component import FootswitchComponent
 from pyfx.widgets.knob_component import KnobComponent
 from pyfx.widgets.new_pedal_variant_dialog import NewPedalVariantDialog
 

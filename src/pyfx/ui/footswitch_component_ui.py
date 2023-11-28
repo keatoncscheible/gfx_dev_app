@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QLineEdit, QSizePolicy, QVBoxLayout
     QWidget)
 
 from pyfx.widgets.editable_label_widget import EditableLabelWidget
-from pyfx.widgets.footswitch import Footswitch
+from pyfx.widgets.footswitch_widget import FootswitchWidget
 
 class Ui_FootswitchComponent(object):
     def setupUi(self, FootswitchComponent):
@@ -52,7 +52,7 @@ class Ui_FootswitchComponent(object):
 
         self.verticalLayout.addWidget(self.footswitch_editbox, 0, Qt.AlignHCenter)
 
-        self.footswitch = Footswitch(FootswitchComponent)
+        self.footswitch = FootswitchWidget(FootswitchComponent)
         self.footswitch.setObjectName(u"footswitch")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy1.setHorizontalStretch(0)

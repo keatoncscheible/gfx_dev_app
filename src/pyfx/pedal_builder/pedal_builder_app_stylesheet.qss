@@ -22,7 +22,7 @@ KnobWidget:handle {
     border-radius: 15px;
 }
 
-Footswitch {
+FootswitchWidget {
     width: 40px;
     height: 40px;
     border-radius: 25px;
@@ -35,16 +35,16 @@ Footswitch {
     text-align: center;
 }
 
-Footswitch:checked {
+FootswitchWidget:checked {
     border: 3px solid #bd68cfff;
 }
 
-Footswitch:hover {
+FootswitchWidget:hover {
     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
                                       stop:0 rgba(255, 255, 255, 255), stop:1 rgba(48, 48, 160, 255));
 }
 
-Footswitch:pressed {
+FootswitchWidget:pressed {
     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1,
                                       stop:0 rgba(100, 100, 100, 255), stop:1 rgba(87, 87, 87, 255));
 }
