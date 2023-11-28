@@ -4,13 +4,12 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 
 from pyfx.audio_processor import AudioProcessor
-from pyfx.config import PedalConfig
 from pyfx.exceptions import PedalDoesNotExistException
 from pyfx.logging import pyfx_log
+from pyfx.pedal import PyFxPedal
 from pyfx.pedal_builder.pedal_builder import PedalBuilder
 from pyfx.ui.pedal_builder_main_window_ui import Ui_PedalBuilderMainWindow
 from pyfx.widgets.about_widget import AboutWidget
-from pyfx.widgets.new_pedal_config_dialog import NewPedalConfigDialog
 from pyfx.widgets.open_pedal_dialog import OpenPedalDialog
 from pyfx.widgets.pedal_widget import PedalWidget
 
@@ -24,9 +23,9 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.setWindowIcon(QIcon("src/pyfx/assets/pyfx_logo.png"))
         self.pedal_builder = pedal_builder
         self.audio_processor = audio_processor
-        if pedal_builder.pedal_config is not None:
-            self.pedal_config = self.pedal_builder.pedal_config
-            self.pedal_widget = PedalWidget(pedal_config=self.pedal_builder.pedal_config)
+        if pedal_builder.pedal is not None:
+            self.pedal: PyFxPedal = self.pedal_builder.pedal
+            self.pedal_widget = PedalWidget(pedal=self.pedal)
             self.pedal_layout.insertWidget(1, self.pedal_widget)
             all_knobs_displays_enabled = all(
                 knob_config.display_enabled for knob_config in self.pedal_widget.knob_widgets.keys()
@@ -38,6 +37,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             self.action_footswitch_displays.setChecked(all_footswitch_displays_enabled)
 
         else:
+            self.pedal: PyFxPedal = None
             self.pedal_widget = None
 
         # Setup transport control
@@ -82,13 +82,11 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
 
     def pedal__add_knob_cb(self):
         pyfx_log.debug("Pedal->Add Knob pressed")
-        knob_name = self.pedal_widget.generate_knob_name()
-        self.pedal_config.add_knob(knob_name)
+        self.pedal.add_knob()
 
     def pedal__add_footswitch_cb(self):
         pyfx_log.debug("Pedal->Add Footswitch pressed")
-        footswitch_name = self.pedal_widget.generate_footswitch_name()
-        self.pedal_config.add_footswitch(footswitch_name)
+        self.pedal.add_footswitch()
 
     """View Menu Callbacks"""
 
@@ -141,7 +139,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             True if the user saved or there was nothing to save
             False if the user decided to cancel the operation
         """
-        if self.pedal_widget and self.pedal_builder.pedal_config.is_modified:
+        if self.pedal_widget and self.pedal.is_modified:
             save_pedal_prompt_response = self.show_save_pedal_prompt()
             if save_pedal_prompt_response == QMessageBox.Yes:
                 self.pedal_builder.save_pedal()
@@ -152,8 +150,8 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
     def new_pedal(self):
         self.close_pedal()
         self.pedal_builder.create_new_pedal()
-        self.pedal_config = self.pedal_builder.pedal_config
-        self.pedal_widget = PedalWidget(pedal_config=self.pedal_builder.pedal_config)
+        self.pedal = self.pedal_builder.pedal
+        self.pedal_widget = PedalWidget(pedal=self.pedal)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
         self.adjust_and_center()
 
@@ -161,7 +159,8 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         pyfx_log.debug(f"Opening {name} pedal")
         self.close_pedal()
         self.pedal_builder.open_pedal(name)
-        self.pedal_widget = PedalWidget(pedal_config=self.pedal_builder.pedal_config)
+        self.pedal = self.pedal_builder.pedal
+        self.pedal_widget = PedalWidget(pedal=self.pedal)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
         self.adjust_and_center()
 

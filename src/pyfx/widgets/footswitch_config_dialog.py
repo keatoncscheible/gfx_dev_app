@@ -3,13 +3,13 @@ from typing import Optional
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QListWidgetItem
 
-from pyfx.config import FootswitchConfig
+from pyfx.footswitch import PyFxFootswitch
 from pyfx.logging import pyfx_log
 from pyfx.ui.footswitch_config_dialog_ui import Ui_FootswitchConfigDialog
 
 
 class FootswitchConfigDialog(QDialog, Ui_FootswitchConfigDialog):
-    def __init__(self, footswitch_config: FootswitchConfig):
+    def __init__(self, footswitch_config: PyFxFootswitch):
         pyfx_log.debug("Footswitch Config Dialog opened")
         super().__init__()
         self.setupUi(self)

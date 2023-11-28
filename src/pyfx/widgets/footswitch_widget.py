@@ -1,7 +1,7 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QPushButton
 
-from pyfx.config import FootswitchConfig
+from pyfx.footswitch import PyFxFootswitch
 from pyfx.logging import pyfx_log
 
 
@@ -14,7 +14,7 @@ class FootswitchWidget(QPushButton):
     def __init__(self, parent):
         super().__init__(parent)
 
-    def load_footswitch_config(self, footswitch_config: FootswitchConfig):
+    def load_footswitch_config(self, footswitch_config: PyFxFootswitch):
         pyfx_log.debug(f"Loading Footswitch config: {footswitch_config.name}")
         self.footswitch_config = footswitch_config
         footswitch_type = footswitch_config.footswitch_type

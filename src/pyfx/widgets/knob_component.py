@@ -1,43 +1,51 @@
 import numpy as np
 from PySide6.QtWidgets import QDialog, QMenu, QMessageBox, QWidget
 
-from pyfx.config import KnobConfig
+from pyfx.knob import PyFxKnob
 from pyfx.logging import pyfx_log
 from pyfx.ui.knob_component_ui import Ui_KnobComponent
 from pyfx.widgets.knob_config_dialog import KnobConfigDialog
 
 
 class KnobComponent(QWidget, Ui_KnobComponent):
-    def __init__(self, knob_config: KnobConfig):
+    def __init__(self, knob_config: PyFxKnob):
         super().__init__()
         self.setupUi(self)
         self.knob_config = knob_config
         self.knob_name.setText(knob_config.name)
         self.knob_name.setStyleSheet("color: #ffffff;")
         self.knob.load_knob_config(knob_config)
+        knob_config.add_set_knob_value_observer(self.change_knob)
+        # self.knob.set_knob_value(knob_config.value)
         self.knob_name.label_changed.connect(knob_config.change_knob_name)
         self.update_knob_editbox_visibility()
-        self.update_knob_editbox()
+        # self.update_knob_editbox()
+        self.change_knob(knob_config.value)
 
     def update_knob_editbox_visibility(self):
         visible = self.knob_config.display_enabled
         self.knob_editbox.setVisible(visible)
         self.knob_editbox_placeholder.setVisible(not visible)
 
-    def update_knob_editbox(self):
+    # def update_knob_editbox(self):
+    #     precision = self.knob_config.precision
+    #     round_amount = int(np.log10(1 / precision))
+    #     value = self.knob_config.value
+    #     if self.knob_config.mode == "logarithmic":
+    #         value_db = 20 * np.log10(value)
+    #         self.knob_editbox.setText(f"{round(value_db, round_amount)} dB")
+    #     else:
+    #         self.knob_editbox.setText(f"{round(value, round_amount)}")
+
+    def change_knob(self, value: float):
+        pyfx_log.debug(f"{self.knob_config.name} changed to {value}")
         precision = self.knob_config.precision
         round_amount = int(np.log10(1 / precision))
-        value = self.knob_config.value
         if self.knob_config.mode == "logarithmic":
             value_db = 20 * np.log10(value)
             self.knob_editbox.setText(f"{round(value_db, round_amount)} dB")
         else:
             self.knob_editbox.setText(f"{round(value, round_amount)}")
-
-    def change_knob(self, value: float):
-        pyfx_log.debug(f"{self.knob_config.name} changed to {value}")
-        self.knob_config.set_value(value)
-        self.update_knob_editbox()
 
     def change_knob_name(self, new_name: str):
         self.knob_config.chan(new_name)

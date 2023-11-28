@@ -1,7 +1,7 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QDialog, QMenu, QMessageBox, QWidget
 
-from pyfx.config import FootswitchConfig
+from pyfx.footswitch import PyFxFootswitch
 from pyfx.logging import pyfx_log
 from pyfx.ui.footswitch_component_ui import Ui_FootswitchComponent
 from pyfx.widgets.footswitch_config_dialog import FootswitchConfigDialog
@@ -10,7 +10,7 @@ from pyfx.widgets.footswitch_config_dialog import FootswitchConfigDialog
 class FootswitchComponent(QWidget, Ui_FootswitchComponent):
     remove_footswitch = Signal(object)
 
-    def __init__(self, footswitch_config: FootswitchConfig):
+    def __init__(self, footswitch_config: PyFxFootswitch):
         super().__init__()
         self.setupUi(self)
         self.footswitch_config = footswitch_config

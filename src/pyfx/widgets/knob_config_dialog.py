@@ -1,13 +1,13 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QMessageBox
 
-from pyfx.config import KnobConfig
+from pyfx.knob import PyFxKnob
 from pyfx.logging import pyfx_log
 from pyfx.ui.knob_config_dialog_ui import Ui_KnobConfigDialog
 
 
 class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
-    def __init__(self, knob_config: KnobConfig):
+    def __init__(self, knob_config: PyFxKnob):
         pyfx_log.debug("Knob Config Dialog opened")
         super().__init__()
         self.setupUi(self)
