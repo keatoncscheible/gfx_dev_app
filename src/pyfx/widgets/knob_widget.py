@@ -8,7 +8,16 @@ from pyfx.logging import pyfx_log
 
 
 class KnobWidget(QDial):
+    """
+    A custom widget that extends QDial to implement a knob-like control.
+    It is configurable for different behaviors and sensitivity settings.
+    """
+
     def __init__(self, parent):
+        """
+        Initializes the knob widget with default properties and connects the valueChanged signal.
+        :param parent: The parent widget.
+        """
         super().__init__(parent)
         self.minimum_value = None
         self.maximum_value = None
@@ -23,6 +32,10 @@ class KnobWidget(QDial):
         self.valueChanged.connect(self.calc_knob_value)
 
     def configure_knob(self, knob: PyFxKnob):
+        """
+        Configures the knob widget based on the properties of a PyFxKnob object.
+        :param knob: The PyFxKnob instance to configure the widget.
+        """
         pyfx_log.debug(f"Loading knob config: {knob.name}")
         self.knob = knob
         self.minimum_value = knob.minimum_value
@@ -38,10 +51,17 @@ class KnobWidget(QDial):
         self.update_knob_settings()
 
     def set_knob_value(self, value: float):
+        """
+        Sets the knob value.
+        :param value: The float value to set the knob to.
+        """
         value_int = int(value / self.precision)
         self.setValue(value_int)
 
     def update_knob_settings(self):
+        """
+        Updates the knob settings like minimum, maximum values, and steps based on the current configuration.
+        """
         self.minimum_value_int = int(self.minimum_value / self.precision)
         self.maximum_value_int = int(self.maximum_value / self.precision)
         single_step = self.sensitivity
@@ -53,6 +73,10 @@ class KnobWidget(QDial):
         self.set_knob_value(self.knob_value)
 
     def calc_knob_value(self, value: int):
+        """
+        Calculates the float value of the knob based on the integer value from the dial.
+        :param value: The integer value from the dial.
+        """
         if self.mode == "linear":
             float_value = value * self.precision
         else:  # logarithmic
@@ -60,6 +84,10 @@ class KnobWidget(QDial):
         self.knob.set_knob_value(float_value)
 
     def mousePressEvent(self, event):
+        """
+        Handles mouse press events. Right-clicks are treated as context menu events.
+        :param event: The mouse event.
+        """
         if event.button() == Qt.RightButton:
             context_event = QContextMenuEvent(QContextMenuEvent.Mouse, event.pos())
             super().contextMenuEvent(context_event)
@@ -67,10 +95,14 @@ class KnobWidget(QDial):
             self.last_y = event.position().y()
 
     def mouseMoveEvent(self, event):
+        """
+        Handles mouse move events to adjust the knob value.
+        :param event: The mouse event.
+        """
         if event.buttons() & Qt.LeftButton:
             step_cnt = self.maximum_value_int - self.minimum_value_int
-            knob_sensitifity_factor = step_cnt * self.sensitivity / 100
-            self.delta_acc += knob_sensitifity_factor * (event.position().y() - self.last_y)
+            knob_sensitivity_factor = step_cnt * self.sensitivity / 100
+            self.delta_acc += knob_sensitivity_factor * (event.position().y() - self.last_y)
             self.last_y = event.position().y()
             delta = int(self.delta_acc)
             self.delta_acc -= delta
@@ -85,7 +117,15 @@ class KnobWidget(QDial):
             self.setValue(new_value)
 
     def mouseDoubleClickEvent(self, event):
+        """
+        Handles mouse double-click events to reset the knob to its default value.
+        :param event: The mouse event.
+        """
         self.set_knob_value(self.default_value)
 
     def mouseReleaseEvent(self, event):
-        """Ignore the mouseReleaseEvent"""
+        """
+        Handles mouse release events. Currently, this method does not perform any action.
+        :param event: The mouse event.
+        """
+        pass
