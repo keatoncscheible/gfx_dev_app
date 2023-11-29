@@ -1,4 +1,3 @@
-from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QDialog, QMessageBox
 
 from pyfx.ui.new_pedal_variant_dialog_ui import Ui_NewPedalVariantDialog
