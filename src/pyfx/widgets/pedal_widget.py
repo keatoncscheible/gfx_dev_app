@@ -15,13 +15,24 @@ from pyfx.widgets.new_pedal_variant_dialog import NewPedalVariantDialog
 
 
 class PedalWidget(QFrame, Ui_PedalWidget):
+    """
+    PedalWidget represents a UI component for a guitar pedal, with controls for knobs and footswitches.
+    It also supports changing pedal color and handling various pedal variants.
+    """
+
     max_knob_columns = 3
     max_footswitch_columns = 3
 
     def __init__(self, pedal: PyFxPedal):
+        """
+        Initialize the PedalWidget.
+        :param pedal: PyFxPedal object representing the pedal configuration.
+        """
         super().__init__()
         self.setupUi(self)
         self.pedal = pedal
+
+        # Connecting pedal changes to UI updates
         self.pedal.add_change_pedal_name_observer(self.set_pedal_name)
         self.pedal.add_add_knob_observer(self.add_knob)
         self.pedal.add_remove_knob_observer(self.remove_knob)
@@ -31,15 +42,17 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.pedal.add_set_text_color_observer(self.set_text_color)
         self.pedal_name_label.label_changed.connect(self.pedal.change_pedal_name)
 
+        # Dictionaries to manage knob and footswitch components
         self.knob_widgets: dict[PyFxKnob, KnobComponent] = {}
         self.footswitch_widgets: dict[PyFxFootswitch, FootswitchComponent] = {}
 
+        # Initialize the UI components for existing knobs and footswitches
         for knob in pedal.knobs.values():
             self.add_knob(knob)
-
         for footswitch in pedal.footswitches.values():
             self.add_footswitch(footswitch)
 
+        # Set initial states for pedal name, color, and text color
         self.set_pedal_name(self.pedal.name)
         self.set_pedal_color(self.pedal.pedal_color)
         self.set_text_color(self.pedal.text_color)
