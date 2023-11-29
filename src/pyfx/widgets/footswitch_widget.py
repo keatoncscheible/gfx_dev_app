@@ -14,10 +14,10 @@ class FootswitchWidget(QPushButton):
     def __init__(self, parent):
         super().__init__(parent)
 
-    def load_footswitch_config(self, footswitch_config: PyFxFootswitch):
-        pyfx_log.debug(f"Loading Footswitch config: {footswitch_config.name}")
-        self.footswitch_config = footswitch_config
-        footswitch_type = footswitch_config.footswitch_type
+    def configure_footswitch(self, footswitch: PyFxFootswitch):
+        pyfx_log.debug(f"Loading Footswitch config: {footswitch.name}")
+        self.footswitch = footswitch
+        footswitch_type = footswitch.footswitch_type
         try:
             self.pressed.disconnect()
         except RuntimeError:
@@ -37,11 +37,11 @@ class FootswitchWidget(QPushButton):
 
         if footswitch_type == "latching":
             self.setCheckable(True)
-            self.setChecked(footswitch_config.state)
+            self.setChecked(footswitch.state)
             self.toggled.connect(self.footswitch_toggled_cb)
         elif footswitch_type == "momentary":
             self.setCheckable(True)
-            self.setChecked(footswitch_config.default_state)
+            self.setChecked(footswitch.default_state)
             self.pressed.connect(self.footswitch_pressed_cb)
             self.released.connect(self.footswitch_released_cb)
         elif footswitch_type == "mode":
@@ -49,26 +49,26 @@ class FootswitchWidget(QPushButton):
             self.clicked.connect(self.footswitch_clicked_cb)
 
     def footswitch_pressed_cb(self):
-        pyfx_log.debug(f"{self.footswitch_config.name} pressed")
-        state = not self.footswitch_config.default_state
-        self.footswitch_config.set_state(state)
+        pyfx_log.debug(f"{self.footswitch.name} pressed")
+        state = not self.footswitch.default_state
+        self.footswitch.set_state(state)
         self.setChecked(state)
         self.footswitch_pressed.emit()
 
     def footswitch_released_cb(self):
-        pyfx_log.debug(f"{self.footswitch_config.name} released")
-        state = self.footswitch_config.default_state
-        self.footswitch_config.set_state(state)
+        pyfx_log.debug(f"{self.footswitch.name} released")
+        state = self.footswitch.default_state
+        self.footswitch.set_state(state)
         self.setChecked(state)
         self.footswitch_released.emit()
 
     def footswitch_toggled_cb(self, state: bool):
         state_str = "on" if state else "off"
-        pyfx_log.debug(f"{self.footswitch_config.name} turned {state_str}")
-        self.footswitch_config.set_state(state)
+        pyfx_log.debug(f"{self.footswitch.name} turned {state_str}")
+        self.footswitch.set_state(state)
         self.footswitch_toggled.emit(state)
 
     def footswitch_clicked_cb(self):
-        self.footswitch_config.next_mode()
-        pyfx_log.debug(f"{self.footswitch_config.name} mode changed to {self.footswitch_config.mode}")
+        self.footswitch.next_mode()
+        pyfx_log.debug(f"{self.footswitch.name} mode changed to {self.footswitch.mode}")
         self.footswitch_clicked.emit()

@@ -52,20 +52,20 @@ class Ui_FootswitchComponent(object):
 
         self.verticalLayout.addWidget(self.footswitch_editbox, 0, Qt.AlignHCenter)
 
-        self.footswitch = FootswitchWidget(FootswitchComponent)
-        self.footswitch.setObjectName(u"footswitch")
+        self.footswitch_widget = FootswitchWidget(FootswitchComponent)
+        self.footswitch_widget.setObjectName(u"footswitch_widget")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.footswitch.sizePolicy().hasHeightForWidth())
-        self.footswitch.setSizePolicy(sizePolicy1)
-        self.footswitch.setMinimumSize(QSize(0, 0))
-        self.footswitch.setMaximumSize(QSize(16777215, 16777215))
-        self.footswitch.setCheckable(True)
-        self.footswitch.setAutoDefault(False)
-        self.footswitch.setFlat(False)
+        sizePolicy1.setHeightForWidth(self.footswitch_widget.sizePolicy().hasHeightForWidth())
+        self.footswitch_widget.setSizePolicy(sizePolicy1)
+        self.footswitch_widget.setMinimumSize(QSize(0, 0))
+        self.footswitch_widget.setMaximumSize(QSize(16777215, 16777215))
+        self.footswitch_widget.setCheckable(True)
+        self.footswitch_widget.setAutoDefault(False)
+        self.footswitch_widget.setFlat(False)
 
-        self.verticalLayout.addWidget(self.footswitch, 0, Qt.AlignHCenter)
+        self.verticalLayout.addWidget(self.footswitch_widget, 0, Qt.AlignHCenter)
 
         self.footswitch_name = EditableLabelWidget(FootswitchComponent)
         self.footswitch_name.setObjectName(u"footswitch_name")
@@ -79,7 +79,7 @@ class Ui_FootswitchComponent(object):
 
         self.retranslateUi(FootswitchComponent)
 
-        self.footswitch.setDefault(False)
+        self.footswitch_widget.setDefault(False)
 
 
         QMetaObject.connectSlotsByName(FootswitchComponent)
@@ -87,7 +87,7 @@ class Ui_FootswitchComponent(object):
 
     def retranslateUi(self, FootswitchComponent):
         FootswitchComponent.setWindowTitle(QCoreApplication.translate("FootswitchComponent", u"FootswitchComponent", None))
-        self.footswitch.setText("")
+        self.footswitch_widget.setText("")
         self.footswitch_name.setText(QCoreApplication.translate("FootswitchComponent", u"Footswitch", None))
     # retranslateUi
 

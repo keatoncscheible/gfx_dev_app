@@ -33,7 +33,7 @@ class Pedal1Pedal(PyFxPedal):
                 sensitivity=1,
                 mode="logarithmic",
                 display_enabled=True,
-                value=112.2018454301963,
+                value=2511.88643150958,
             ),
         }
 
@@ -42,7 +42,7 @@ class Pedal1Pedal(PyFxPedal):
                 name="Latching",
                 footswitch_type="latching",
                 default_state=True,
-                state=True,
+                state=False,
                 mode=None,
                 modes=None,
                 display_enabled=True,
@@ -61,7 +61,7 @@ class Pedal1Pedal(PyFxPedal):
                 footswitch_type="mode",
                 default_state=None,
                 state=None,
-                mode="Mode 2",
+                mode="Mode 1",
                 modes=[
                     "Mode 1",
                     "Mode 2",

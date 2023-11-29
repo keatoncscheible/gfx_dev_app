@@ -30,7 +30,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             all_knobs_displays_enabled = all(knob.display_enabled for knob in self.pedal_widget.knob_widgets.keys())
             self.action_knob_displays.setChecked(all_knobs_displays_enabled)
             all_footswitch_displays_enabled = all(
-                footswitch_config.display_enabled for footswitch_config in self.pedal_widget.footswitch_widgets.keys()
+                footswitch.display_enabled for footswitch in self.pedal_widget.footswitch_widgets.keys()
             )
             self.action_footswitch_displays.setChecked(all_footswitch_displays_enabled)
 

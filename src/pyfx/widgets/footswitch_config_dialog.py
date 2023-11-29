@@ -9,22 +9,22 @@ from pyfx.ui.footswitch_config_dialog_ui import Ui_FootswitchConfigDialog
 
 
 class FootswitchConfigDialog(QDialog, Ui_FootswitchConfigDialog):
-    def __init__(self, footswitch_config: PyFxFootswitch):
+    def __init__(self, footswitch: PyFxFootswitch):
         pyfx_log.debug("Footswitch Config Dialog opened")
         super().__init__()
         self.setupUi(self)
-        self.footswitch_config = footswitch_config
-        footswitch_type = footswitch_config.footswitch_type
+        self.footswitch = footswitch
+        footswitch_type = footswitch.footswitch_type
         self.footswitch_type_combobox.setCurrentText(footswitch_type)
-        self.enable_display_checkbox.setChecked(footswitch_config.display_enabled)
+        self.enable_display_checkbox.setChecked(footswitch.display_enabled)
         if footswitch_type == "momentary":
-            self.default_combobox.setCurrentText("on" if footswitch_config.default_state else "off")
+            self.default_combobox.setCurrentText("on" if footswitch.default_state else "off")
         elif footswitch_type == "mode":
-            for mode in self.footswitch_config.modes:
+            for mode in self.footswitch.modes:
                 self.add_mode(mode)
 
         self.footswitch_type_combobox.currentTextChanged.connect(self.change_footswitch_type_settings)
-        self.change_footswitch_type_settings(footswitch_config.footswitch_type)
+        self.change_footswitch_type_settings(footswitch.footswitch_type)
         self.add_mode_button.pressed.connect(self.add_mode)
         self.remove_mode_button.pressed.connect(self.remove_selected_mode)
         self.move_mode_up_button.pressed.connect(self.move_selected_mode_up)
@@ -35,22 +35,22 @@ class FootswitchConfigDialog(QDialog, Ui_FootswitchConfigDialog):
     def apply_clicked(self):
         pyfx_log.debug("Footswitch Config applied")
         footswitch_type = self.footswitch_type_combobox.currentText()
-        self.footswitch_config.set_footswitch_type(footswitch_type)
-        self.footswitch_config.set_display_enabled(self.enable_display_checkbox.isChecked())
+        self.footswitch.set_footswitch_type(footswitch_type)
+        self.footswitch.set_display_enabled(self.enable_display_checkbox.isChecked())
         if footswitch_type == "latching":
-            self.footswitch_config.set_state(True)
-            self.footswitch_config.set_default_state(True)
-            self.footswitch_config.set_modes(None)
+            self.footswitch.set_state(True)
+            self.footswitch.set_default_state(True)
+            self.footswitch.set_modes(None)
         elif footswitch_type == "momentary":
             default_state = True if self.default_combobox.currentText() == "on" else False
-            self.footswitch_config.set_modes(None)
-            self.footswitch_config.set_default_state(default_state)
-            self.footswitch_config.set_state(default_state)
+            self.footswitch.set_modes(None)
+            self.footswitch.set_default_state(default_state)
+            self.footswitch.set_state(default_state)
         elif footswitch_type == "mode":
             modes = [self.modes_list.item(i).text() for i in range(self.modes_list.count())]
-            self.footswitch_config.set_modes(modes)
-            self.footswitch_config.set_default_state(None)
-            self.footswitch_config.set_state(None)
+            self.footswitch.set_modes(modes)
+            self.footswitch.set_default_state(None)
+            self.footswitch.set_state(None)
 
         super().accept()
 

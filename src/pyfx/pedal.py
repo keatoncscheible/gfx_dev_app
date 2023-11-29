@@ -224,23 +224,23 @@ class PyFxPedal(ABC, PyFxComponent):
         )
         self._add_footswitch_observers.remove(observer)
 
-    def notify_add_footswitch_observers(self, footswitch_config: PyFxFootswitch):
+    def notify_add_footswitch_observers(self, footswitch: PyFxFootswitch):
         for observer in self._add_footswitch_observers:
             pyfx_log.debug(
                 f"Calling {self.name} pedal add footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
-            observer(footswitch_config)
+            observer(footswitch)
 
     """Remove Footswitch"""
 
-    def remove_footswitch(self, footswitch_config: PyFxFootswitch):
+    def remove_footswitch(self, footswitch: PyFxFootswitch):
         try:
-            del self.footswitches[footswitch_config.name]
+            del self.footswitches[footswitch.name]
         except KeyError as err:
             raise FootswitchDoesNotExistException() from err
-        pyfx_log.debug(f"Remove {footswitch_config.name} footswitch from {self.name} pedal")
+        pyfx_log.debug(f"Remove {footswitch.name} footswitch from {self.name} pedal")
         self.modified = True
-        self.notify_remove_footswitch_observers(footswitch_config)
+        self.notify_remove_footswitch_observers(footswitch)
 
     def add_remove_footswitch_observer(self, observer):
         pyfx_log.debug(
@@ -254,12 +254,12 @@ class PyFxPedal(ABC, PyFxComponent):
         )
         self._remove_footswitch_observers.remove(observer)
 
-    def notify_remove_footswitch_observers(self, footswitch_config: PyFxFootswitch):
+    def notify_remove_footswitch_observers(self, footswitch: PyFxFootswitch):
         for observer in self._remove_footswitch_observers:
             pyfx_log.debug(
                 f"Calling {self.name} pedal remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
-            observer(footswitch_config)
+            observer(footswitch)
 
     """Change Footswitch Name"""
 
