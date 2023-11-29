@@ -56,3 +56,8 @@ class NewPedalConfigException(Exception):
 class PedalVariantAlreadyExistsException(Exception):
     def __init__(self):
         super().__init__()
+
+
+class PedalVariantDoesNotExistException(Exception):
+    def __init__(self):
+        super().__init__()

@@ -62,12 +62,12 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         change_pedal_color_action = context_menu.addAction("Change Pedal Color")
         change_text_color_action = context_menu.addAction("Change Text Color")
 
-        def variant_selected(variant):
-            pyfx_log.debug(f"Variant {variant} selected")
-            self.pedal.set_variant(variant)
+        def variant_selected(variant_name: str):
+            pyfx_log.debug(f"Variant {variant_name} selected")
+            self.pedal.set_variant(variant_name)
 
-        def show_remove_variant_conformation_prompt(variant: str):
-            message = f"Are you sure you want to remove the {variant} variant? These changes cannot be undone."
+        def show_remove_variant_conformation_prompt(variant_name: str):
+            message = f"Are you sure you want to remove the {variant_name} variant? These changes cannot be undone."
             confirmation_prompt = QMessageBox()
             confirmation_prompt.setIcon(QMessageBox.Warning)
             confirmation_prompt.setWindowTitle("Confirm Variant Removal")
@@ -77,27 +77,27 @@ class PedalWidget(QFrame, Ui_PedalWidget):
 
             return confirmation_prompt.exec() == QMessageBox.Yes
 
-        def variant_removed(variant):
-            if show_remove_variant_conformation_prompt(variant):
-                pyfx_log.debug(f"Variant {variant} removed")
-                self.pedal.remove_variant(variant)
+        def variant_removed(variant_name: str):
+            if show_remove_variant_conformation_prompt(variant_name):
+                pyfx_log.debug(f"Variant {variant_name} removed")
+                self.pedal.remove_variant(variant_name)
 
-        def variant_name_changed(variant):
-            new_variant, ok = QInputDialog.getText(None, "Input New Variant", "New Variant Name:")
-            if not ok or not new_variant:
+        def variant_name_changed(variant_name: str):
+            new_variant_name, ok = QInputDialog.getText(None, "Input New Variant", "New Variant Name:")
+            if not ok or not new_variant_name:
                 return None
-            pyfx_log.debug(f"Variant name changed from {variant} to {new_variant}")
-            self.pedal.change_variant_name(variant, new_variant)
+            pyfx_log.debug(f"Variant name changed from {variant_name} to {new_variant_name}")
+            self.pedal.change_variant_name(variant_name, new_variant_name)
 
         for variant in self.pedal.variants:
-            select_variant_action = select_variant_menu.addAction(variant)
+            select_variant_action = select_variant_menu.addAction(variant.name)
             select_variant_action.setCheckable(True)
             select_variant_action.setChecked(variant == self.pedal.variant)
-            select_variant_action.triggered.connect(partial(variant_selected, variant))
-            remove_variant_action = remove_variant_menu.addAction(variant)
-            remove_variant_action.triggered.connect(partial(variant_removed, variant))
-            change_variant_name_action = change_variant_name_menu.addAction(variant)
-            change_variant_name_action.triggered.connect(partial(variant_name_changed, variant))
+            select_variant_action.triggered.connect(partial(variant_selected, variant.name))
+            remove_variant_action = remove_variant_menu.addAction(variant.name)
+            remove_variant_action.triggered.connect(partial(variant_removed, variant.name))
+            change_variant_name_action = change_variant_name_menu.addAction(variant.name)
+            change_variant_name_action.triggered.connect(partial(variant_name_changed, variant.name))
 
         # Show the context menu at the cursor position
         action = context_menu.exec(event.globalPos())
@@ -111,10 +111,9 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             pyfx_log.debug("Create New Variant Pressed")
             dialog = NewPedalVariantDialog()
             if dialog.exec_() == QDialog.Accepted:
-                variant = dialog.new_pedal_variant
-                pyfx_log.debug(f"Created {variant} variant")
-
-                self.pedal.add_variant(variant)
+                variant_name = dialog.new_pedal_variant
+                pyfx_log.debug(f"Created {variant_name} variant")
+                self.pedal.add_variant(variant_name)
         elif action == change_pedal_color_action:
             pyfx_log.debug("Change Pedal Color Pressed")
             color = QColorDialog.getColor()

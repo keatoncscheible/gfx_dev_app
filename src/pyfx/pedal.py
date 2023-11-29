@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -7,6 +9,8 @@ from pyfx.exceptions import (
     FootswitchDoesNotExistException,
     KnobAlreadyExistsException,
     KnobDoesNotExistException,
+    PedalVariantAlreadyExistsException,
+    PedalVariantDoesNotExistException,
 )
 from pyfx.footswitch import PyFxFootswitch
 from pyfx.knob import PyFxKnob
@@ -17,10 +21,10 @@ class PyFxPedal(ABC, PyFxComponent):
     def __init__(
         self,
         name: str,
-        knobs: Optional[dict[str, PyFxKnob]] = None,
-        footswitches: Optional[dict[str, PyFxFootswitch]] = None,
-        variant: Optional[str] = None,
-        variants: Optional[list[str]] = None,
+        knobs: dict[str, PyFxKnob] | None = None,
+        footswitches: dict[str, PyFxFootswitch] | None = None,
+        variant: PyFxPedalVariant | None = None,
+        variants: list[PyFxPedalVariant] | None = None,
         pedal_color: str = "#0000FF",
         text_color: str = "#FFFFFF",
     ):
@@ -291,12 +295,17 @@ class PyFxPedal(ABC, PyFxComponent):
 
     """Set Variant"""
 
-    def set_variant(self, name: str):
-        if self.variant != name:
-            pyfx_log.debug(f"Set {self.name} pedal variant to {name}")
-            self.variant = name
+    def set_variant(self, variant_name: str):
+        try:
+            variant = next(variant for variant in self.variants if variant.name == variant_name)
+        except StopIteration as err:
+            raise PedalVariantDoesNotExistException() from err
+
+        if self.variant != variant:
+            pyfx_log.debug(f"Set {self.name} pedal variant to {variant.name}")
+            self.variant = variant
             self.modified = True
-            self.notify_set_variant_observers(name)
+            self.notify_set_variant_observers(variant)
 
     def add_set_variant_observer(self, observer):
         pyfx_log.debug(
@@ -310,21 +319,22 @@ class PyFxPedal(ABC, PyFxComponent):
         )
         self._set_variant_observers.remove(observer)
 
-    def notify_set_variant_observers(self, name: str):
+    def notify_set_variant_observers(self, variant: PyFxPedalVariant):
         for observer in self._set_variant_observers:
             pyfx_log.debug(
                 f"Calling {self.name} pedal set variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
-            observer(name)
+            observer(variant)
 
     """Add Variant"""
 
-    def add_variant(self, name: str):
-        if name not in self.variants:
-            pyfx_log.debug(f"Add {name} {self.name} pedal variant")
-            self.variants.append(name)
-            self.notify_add_variant_observers(name)
-            self.set_variant(name)
+    def add_variant(self, variant_name: str):
+        if variant_name not in [variant.name for variant in self.variants]:
+            pyfx_log.debug(f"Add {variant_name} {self.name} pedal variant")
+            variant = PyFxPedalVariant(name=variant_name, knobs=self.knobs, footswitches=self.footswitches)
+            self.variants.append(variant)
+            self.notify_add_variant_observers(variant)
+            self.set_variant(variant.name)
             self.modified = True
 
     def add_add_variant_observer(self, observer):
@@ -339,23 +349,24 @@ class PyFxPedal(ABC, PyFxComponent):
         )
         self._add_variant_observers.remove(observer)
 
-    def notify_add_variant_observers(self, name: str):
+    def notify_add_variant_observers(self, variant: PyFxPedalVariant):
         for observer in self._add_variant_observers:
             pyfx_log.debug(
                 f"Calling {self.name} pedal add variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
-            observer(name)
+            observer(variant)
 
     """Remove Variant"""
 
-    def remove_variant(self, name: str):
-        if name in self.variants:
-            pyfx_log.debug(f"Remove {name} {self.name} pedal variant")
-            self.variants.remove(name)
-            if self.variant == name:
+    def remove_variant(self, variant_name: str):
+        if variant_name in [variant.name for variant in self.variants]:
+            pyfx_log.debug(f"Remove {variant_name} {self.name} pedal variant")
+            variant = next(variant for variant in self.variants if variant.name == variant_name)
+            self.variants.remove(variant)
+            if self.variant == variant:
                 self.variant = None
             self.modified = True
-            self.notify_remove_variant_observers(name)
+            self.notify_remove_variant_observers(variant)
 
     def add_remove_variant_observer(self, observer):
         pyfx_log.debug(
@@ -369,21 +380,21 @@ class PyFxPedal(ABC, PyFxComponent):
         )
         self._remove_variant_observers.remove(observer)
 
-    def notify_remove_variant_observers(self, name: str):
+    def notify_remove_variant_observers(self, variant: PyFxPedalVariant):
         for observer in self._remove_variant_observers:
             pyfx_log.debug(
                 f"Calling {self.name} pedal remove variant observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
-            observer(name)
+            observer(variant)
 
     """Change Variant Name"""
 
     def change_variant_name(self, old_name, new_name: str):
-        if old_name in self.variants:
+        if old_name in [variant.name for variant in self.variants]:
             pyfx_log.debug(f"Change {old_name} {self.name} pedal variant to {new_name}")
-            self.variants = [new_name if variant == old_name else variant for variant in self.variants]
-            if self.variant == old_name:
-                self.variant = new_name
+            for variant in self.variants:
+                if variant.name == old_name:
+                    variant.name = new_name
             self.notify_change_variant_name_observers(old_name, new_name)
 
     def add_change_variant_name_observer(self, observer):
