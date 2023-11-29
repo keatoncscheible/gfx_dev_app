@@ -26,6 +26,7 @@ class Ui_PedalWidget(object):
             PedalWidget.setObjectName(u"PedalWidget")
         PedalWidget.resize(219, 340)
         PedalWidget.setMaximumSize(QSize(16777215, 16777215))
+        PedalWidget.setFocusPolicy(Qt.ClickFocus)
         self.verticalLayout = QVBoxLayout(PedalWidget)
         self.verticalLayout.setSpacing(20)
         self.verticalLayout.setObjectName(u"verticalLayout")
