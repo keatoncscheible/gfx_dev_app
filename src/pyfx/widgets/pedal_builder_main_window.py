@@ -4,7 +4,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 
 from pyfx.audio_processor import AudioProcessor
-from pyfx.exceptions import PedalDoesNotExistException
+from pyfx.exceptions import PedalDoesNotExistError
 from pyfx.logging import pyfx_log
 from pyfx.pedal import PyFxPedal
 from pyfx.pedal_builder.pedal_builder import PedalBuilder
@@ -176,7 +176,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
     def save_pedal(self):
         try:
             self.pedal_builder.save_pedal()
-        except PedalDoesNotExistException:
+        except PedalDoesNotExistError:
             pass
 
     """Helper Functions"""

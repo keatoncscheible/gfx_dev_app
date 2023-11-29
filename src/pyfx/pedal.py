@@ -5,12 +5,12 @@ from typing import Optional
 
 from pyfx.component import PyFxComponent
 from pyfx.exceptions import (
-    FootswitchAlreadyExistsException,
-    FootswitchDoesNotExistException,
-    KnobAlreadyExistsException,
-    KnobDoesNotExistException,
-    PedalVariantAlreadyExistsException,
-    PedalVariantDoesNotExistException,
+    FootswitchAlreadyExistsError,
+    FootswitchDoesNotExistError,
+    KnobAlreadyExistsError,
+    KnobDoesNotExistError,
+    PedalVariantAlreadyExistsError,
+    PedalVariantDoesNotExistError,
 )
 from pyfx.footswitch import PyFxFootswitch
 from pyfx.knob import PyFxKnob
@@ -113,7 +113,7 @@ class PyFxPedal(ABC, PyFxComponent):
                 knob_idx += 1
             knob = PyFxKnob(knob_name)
         elif knob.name in self.knobs:
-            raise KnobAlreadyExistsException()
+            raise KnobAlreadyExistsError()
         pyfx_log.debug(f"Add {knob.name} knob to {self.name} pedal")
         knob.add_remove_knob_observer(self.remove_knob)
         self.knobs[knob.name] = knob
@@ -145,7 +145,7 @@ class PyFxPedal(ABC, PyFxComponent):
         try:
             del self.knobs[knob.name]
         except KeyError as err:
-            raise KnobDoesNotExistException() from err
+            raise KnobDoesNotExistError() from err
         pyfx_log.debug(f"Remove {knob.name} knob from {self.name} pedal")
         self.modified = True
         self.notify_remove_knob_observers(knob)
@@ -209,7 +209,7 @@ class PyFxPedal(ABC, PyFxComponent):
                 footswitch_idx += 1
             footswitch = PyFxFootswitch(footswitch_name)
         elif footswitch.name in self.footswitches:
-            raise FootswitchAlreadyExistsException()
+            raise FootswitchAlreadyExistsError()
         pyfx_log.debug(f"Add {footswitch.name} footswitch to {self.name} pedal")
         footswitch.add_remove_footswitch_observer(self.remove_footswitch)
         self.footswitches[footswitch.name] = footswitch
@@ -241,7 +241,7 @@ class PyFxPedal(ABC, PyFxComponent):
         try:
             del self.footswitches[footswitch.name]
         except KeyError as err:
-            raise FootswitchDoesNotExistException() from err
+            raise FootswitchDoesNotExistError() from err
         pyfx_log.debug(f"Remove {footswitch.name} footswitch from {self.name} pedal")
         self.modified = True
         self.notify_remove_footswitch_observers(footswitch)
@@ -299,7 +299,7 @@ class PyFxPedal(ABC, PyFxComponent):
         try:
             variant = next(variant for variant in self.variants if variant.name == variant_name)
         except StopIteration as err:
-            raise PedalVariantDoesNotExistException() from err
+            raise PedalVariantDoesNotExistError() from err
 
         if self.variant != variant:
             pyfx_log.debug(f"Set {self.name} pedal variant to {variant.name}")

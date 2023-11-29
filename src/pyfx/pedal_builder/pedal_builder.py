@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional
 
 from pyfx.audio_processor import AudioProcessor
-from pyfx.exceptions import InvalidPedalConfigException, PedalDoesNotExistException
+from pyfx.exceptions import InvalidPedalConfigError, PedalDoesNotExistError
 from pyfx.footswitch import PyFxFootswitch
 from pyfx.knob import PyFxKnob
 from pyfx.logging import pyfx_log
@@ -281,7 +281,7 @@ class PedalBuilder:
 
     def save_pedal(self):
         if self.pedal is None:
-            raise PedalDoesNotExistException()
+            raise PedalDoesNotExistError()
 
         update_pedal_module(self.root_pedal_folder, self.pedal.name, self.pedal)
         self.update_previous_pedal_file()

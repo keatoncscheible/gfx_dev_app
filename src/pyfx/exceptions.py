@@ -1,63 +1,63 @@
-class KnobAlreadyExistsException(Exception):
+class KnobAlreadyExistsError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class KnobDoesNotExistException(Exception):
+class KnobDoesNotExistError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class FootswitchAlreadyExistsException(Exception):
+class FootswitchAlreadyExistsError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class FootswitchDoesNotExistException(Exception):
+class FootswitchDoesNotExistError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class PedalAlreadyExistsException(Exception):
+class PedalAlreadyExistsError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class PedalDoesNotExistException(Exception):
+class PedalDoesNotExistError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class InvalidPedalConfigException(Exception):
+class InvalidPedalConfigError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class UnsavedPedalChangesException(Exception):
+class UnsavedPedalChangesError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class PedalOverwriteException(Exception):
+class PedalOverwriteError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class PedalConfigNotFoundException(Exception):
+class PedalConfigNotFoundError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class NewPedalConfigException(Exception):
+class NewPedalConfigError(Exception):
     def __init__(self, message: str = None):
         super().__init__(message)
 
 
-class PedalVariantAlreadyExistsException(Exception):
+class PedalVariantAlreadyExistsError(Exception):
     def __init__(self):
         super().__init__()
 
 
-class PedalVariantDoesNotExistException(Exception):
+class PedalVariantDoesNotExistError(Exception):
     def __init__(self):
         super().__init__()
