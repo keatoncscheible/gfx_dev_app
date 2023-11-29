@@ -3,7 +3,8 @@ from PySide6.QtWidgets import QLabel, QLineEdit
 
 
 class CustomLineEdit(QLineEdit):
-    editingCanceled = Signal()
+    editing_canceled = Signal()
+    editing_accepted = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -11,11 +12,11 @@ class CustomLineEdit(QLineEdit):
 
     def focusOutEvent(self, event):
         super().focusOutEvent(event)
-        self.editingCanceled.emit()
+        self.editing_accepted.emit()
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
-            self.editingCanceled.emit()
+            self.editing_canceled.emit()
         else:
             super().keyPressEvent(event)
 
@@ -35,7 +36,8 @@ class EditableLabelWidget(QLabel):
         self.editbox = CustomLineEdit(self)
         self.editbox.setText(self.text())
         self.editbox.returnPressed.connect(self.finish_editing)
-        self.editbox.editingCanceled.connect(self.cancel_editing)
+        self.editbox.editing_accepted.connect(self.finish_editing)
+        self.editbox.editing_canceled.connect(self.cancel_editing)
         self.editbox.show()
         self.editbox.setFocus()
         self.editbox.selectAll()
