@@ -34,7 +34,7 @@ class KnobWidget(QDial):
         if self.mode == "linear":
             self.knob_value = np.clip(knob.value, self.minimum_value, self.maximum_value)
         elif self.mode == "logarithmic":
-            self.knob_value = np.clip(knob.value, 10 ** (self.minimum_value / 20), 10 ** (self.maximum_value / 20))
+            self.knob_value = np.clip(20 * np.log10(knob.value), self.minimum_value, self.maximum_value)
         self.update_knob_settings()
 
     def set_knob_value(self, value: float):
