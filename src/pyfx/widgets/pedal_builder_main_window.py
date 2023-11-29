@@ -27,9 +27,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             self.pedal: PyFxPedal = self.pedal_builder.pedal
             self.pedal_widget = PedalWidget(pedal=self.pedal)
             self.pedal_layout.insertWidget(1, self.pedal_widget)
-            all_knobs_displays_enabled = all(
-                knob_config.display_enabled for knob_config in self.pedal_widget.knob_widgets.keys()
-            )
+            all_knobs_displays_enabled = all(knob.display_enabled for knob in self.pedal_widget.knob_widgets.keys())
             self.action_knob_displays.setChecked(all_knobs_displays_enabled)
             all_footswitch_displays_enabled = all(
                 footswitch_config.display_enabled for footswitch_config in self.pedal_widget.footswitch_widgets.keys()

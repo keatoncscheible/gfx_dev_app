@@ -22,21 +22,19 @@ class KnobWidget(QDial):
         self.setFixedSize(75, 75)
         self.valueChanged.connect(self.calc_knob_value)
 
-    def load_knob_config(self, knob_config: PyFxKnob):
-        pyfx_log.debug(f"Loading knob config: {knob_config.name}")
-        self.knob_config = knob_config
-        self.minimum_value = knob_config.minimum_value
-        self.maximum_value = knob_config.maximum_value
-        self.precision = knob_config.precision
-        self.sensitivity = knob_config.sensitivity
-        self.default_value = knob_config.default_value
-        self.mode = knob_config.mode
+    def configure_knob(self, knob: PyFxKnob):
+        pyfx_log.debug(f"Loading knob config: {knob.name}")
+        self.knob = knob
+        self.minimum_value = knob.minimum_value
+        self.maximum_value = knob.maximum_value
+        self.precision = knob.precision
+        self.sensitivity = knob.sensitivity
+        self.default_value = knob.default_value
+        self.mode = knob.mode
         if self.mode == "linear":
-            self.knob_value = np.clip(knob_config.value, self.minimum_value, self.maximum_value)
+            self.knob_value = np.clip(knob.value, self.minimum_value, self.maximum_value)
         elif self.mode == "logarithmic":
-            self.knob_value = np.clip(
-                knob_config.value, 10 ** (self.minimum_value / 20), 10 ** (self.maximum_value / 20)
-            )
+            self.knob_value = np.clip(knob.value, 10 ** (self.minimum_value / 20), 10 ** (self.maximum_value / 20))
         self.update_knob_settings()
 
     def set_knob_value(self, value: float):
@@ -59,7 +57,7 @@ class KnobWidget(QDial):
             float_value = value * self.precision
         else:  # logarithmic
             float_value = 10 ** (value * self.precision / 20)
-        self.knob_config.set_knob_value(float_value)
+        self.knob.set_knob_value(float_value)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:

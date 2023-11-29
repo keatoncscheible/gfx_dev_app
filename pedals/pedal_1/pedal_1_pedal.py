@@ -22,7 +22,7 @@ class Pedal1Pedal(PyFxPedal):
                 sensitivity=1,
                 mode="linear",
                 display_enabled=True,
-                value=3.1,
+                value=5.0,
             ),
             "Logarithmic": PyFxKnob(
                 name="Logarithmic",
@@ -33,7 +33,7 @@ class Pedal1Pedal(PyFxPedal):
                 sensitivity=1,
                 mode="logarithmic",
                 display_enabled=True,
-                value=251.18864315095797,
+                value=112.2018454301963,
             ),
         }
 

@@ -128,23 +128,23 @@ class PyFxPedal(ABC, PyFxComponent):
         )
         self._add_knob_observers.remove(observer)
 
-    def notify_add_knob_observers(self, knob_config: PyFxKnob):
+    def notify_add_knob_observers(self, knob: PyFxKnob):
         for observer in self._add_knob_observers:
             pyfx_log.debug(
                 f"Calling {self.name} pedal add knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
-            observer(knob_config)
+            observer(knob)
 
     """Remove Knob"""
 
-    def remove_knob(self, knob_config: PyFxKnob):
+    def remove_knob(self, knob: PyFxKnob):
         try:
-            del self.knobs[knob_config.name]
+            del self.knobs[knob.name]
         except KeyError as err:
             raise KnobDoesNotExistException() from err
-        pyfx_log.debug(f"Remove {knob_config.name} knob from {self.name} pedal")
+        pyfx_log.debug(f"Remove {knob.name} knob from {self.name} pedal")
         self.modified = True
-        self.notify_remove_knob_observers(knob_config)
+        self.notify_remove_knob_observers(knob)
 
     def add_remove_knob_observer(self, observer):
         pyfx_log.debug(
@@ -158,12 +158,12 @@ class PyFxPedal(ABC, PyFxComponent):
         )
         self._remove_knob_observers.remove(observer)
 
-    def notify_remove_knob_observers(self, knob_config: PyFxKnob):
+    def notify_remove_knob_observers(self, knob: PyFxKnob):
         for observer in self._remove_knob_observers:
             pyfx_log.debug(
                 f"Calling {self.name} pedal remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
-            observer(knob_config)
+            observer(knob)
 
     """Change Knob Name"""
 

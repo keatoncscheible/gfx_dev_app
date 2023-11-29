@@ -34,8 +34,8 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.knob_widgets: dict[PyFxKnob, KnobComponent] = {}
         self.footswitch_widgets: dict[PyFxFootswitch, FootswitchComponent] = {}
 
-        for knob_config in pedal.knobs.values():
-            self.add_knob(knob_config)
+        for knob in pedal.knobs.values():
+            self.add_knob(knob)
 
         for footswitch_config in pedal.footswitches.values():
             self.add_footswitch(footswitch_config)
@@ -169,18 +169,18 @@ class PedalWidget(QFrame, Ui_PedalWidget):
                 return footswitch_name
             footswitch_idx += 1
 
-    def add_knob(self, knob_config: PyFxKnob):
-        knob_widget = KnobComponent(knob_config=knob_config)
-        self.knob_widgets[knob_config] = knob_widget
+    def add_knob(self, knob: PyFxKnob):
+        knob_widget = KnobComponent(knob=knob)
+        self.knob_widgets[knob] = knob_widget
         knob_cnt = len(self.knob_widgets)
         row = int((knob_cnt - 1) / self.max_knob_columns)
         column = (knob_cnt - 1) % self.max_knob_columns
         self.knob_layout.addWidget(knob_widget, row, column)
 
-    def remove_knob(self, knob_config: PyFxKnob):
-        self.knob_layout.removeWidget(self.knob_widgets[knob_config])
-        self.knob_widgets[knob_config].deleteLater()
-        del self.knob_widgets[knob_config]
+    def remove_knob(self, knob: PyFxKnob):
+        self.knob_layout.removeWidget(self.knob_widgets[knob])
+        self.knob_widgets[knob].deleteLater()
+        del self.knob_widgets[knob]
 
     def add_footswitch(self, footswitch_config: PyFxFootswitch = None):
         footswitch_widget = FootswitchComponent(footswitch_config=footswitch_config)
@@ -198,13 +198,13 @@ class PedalWidget(QFrame, Ui_PedalWidget):
     def hide_all_knob_displays(self):
         for knob_widget in self.knob_widgets.values():
             knob_widget.knob_editbox.hide()
-            knob_widget.knob_config.set_display_enabled(False)
+            knob_widget.knob.set_display_enabled(False)
             knob_widget.update_knob_editbox_visibility()
 
     def show_all_knob_displays(self):
         for knob_widget in self.knob_widgets.values():
             knob_widget.knob_editbox.show()
-            knob_widget.knob_config.set_display_enabled(True)
+            knob_widget.knob.set_display_enabled(True)
             knob_widget.update_knob_editbox_visibility()
 
     def hide_all_footswitch_displays(self):

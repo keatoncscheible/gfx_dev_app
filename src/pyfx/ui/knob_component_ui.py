@@ -52,14 +52,14 @@ class Ui_KnobComponent(object):
 
         self.knob_component_layout.addWidget(self.knob_editbox, 0, Qt.AlignHCenter)
 
-        self.knob = KnobWidget(KnobComponent)
-        self.knob.setObjectName(u"knob")
-        sizePolicy.setHeightForWidth(self.knob.sizePolicy().hasHeightForWidth())
-        self.knob.setSizePolicy(sizePolicy)
-        self.knob.setMinimumSize(QSize(75, 75))
-        self.knob.setMaximumSize(QSize(75, 75))
+        self.knob_widget = KnobWidget(KnobComponent)
+        self.knob_widget.setObjectName(u"knob_widget")
+        sizePolicy.setHeightForWidth(self.knob_widget.sizePolicy().hasHeightForWidth())
+        self.knob_widget.setSizePolicy(sizePolicy)
+        self.knob_widget.setMinimumSize(QSize(75, 75))
+        self.knob_widget.setMaximumSize(QSize(75, 75))
 
-        self.knob_component_layout.addWidget(self.knob, 0, Qt.AlignHCenter)
+        self.knob_component_layout.addWidget(self.knob_widget, 0, Qt.AlignHCenter)
 
         self.knob_name = EditableLabelWidget(KnobComponent)
         self.knob_name.setObjectName(u"knob_name")

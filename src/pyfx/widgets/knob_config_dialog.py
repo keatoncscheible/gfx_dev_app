@@ -7,35 +7,35 @@ from pyfx.ui.knob_config_dialog_ui import Ui_KnobConfigDialog
 
 
 class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
-    def __init__(self, knob_config: PyFxKnob):
+    def __init__(self, knob: PyFxKnob):
         pyfx_log.debug("Knob Config Dialog opened")
         super().__init__()
         self.setupUi(self)
-        self.knob_config = knob_config
-        self.minimum_spinbox.setValue(knob_config.minimum_value)
-        self.maximum_spinbox.setValue(knob_config.maximum_value)
-        self.default_spinbox.setValue(knob_config.default_value)
-        self.precision_spinbox.setValue(knob_config.precision)
-        self.sensitivity_spinbox.setValue(knob_config.sensitivity)
-        self.mode_combobox.setCurrentText(knob_config.mode)
-        self.enable_display_checkbox.setChecked(knob_config.display_enabled)
+        self.knob = knob
+        self.minimum_spinbox.setValue(knob.minimum_value)
+        self.maximum_spinbox.setValue(knob.maximum_value)
+        self.default_spinbox.setValue(knob.default_value)
+        self.precision_spinbox.setValue(knob.precision)
+        self.sensitivity_spinbox.setValue(knob.sensitivity)
+        self.mode_combobox.setCurrentText(knob.mode)
+        self.enable_display_checkbox.setChecked(knob.display_enabled)
         self.button_box.clicked.connect(self.apply_clicked)
         self.mode_combobox.currentTextChanged.connect(self.change_mode_settings)
 
     def apply_clicked(self):
-        self.knob_config.set_minimum_value(self.minimum_spinbox.value())
-        self.knob_config.set_maximum_value(self.maximum_spinbox.value())
-        self.knob_config.set_default_value(self.default_spinbox.value())
-        self.knob_config.set_precision(self.precision_spinbox.value())
-        self.knob_config.set_sensitivity(self.sensitivity_spinbox.value())
-        self.knob_config.set_mode(self.mode_combobox.currentText())
-        self.knob_config.set_display_enabled(self.enable_display_checkbox.isChecked())
+        self.knob.set_minimum_value(self.minimum_spinbox.value())
+        self.knob.set_maximum_value(self.maximum_spinbox.value())
+        self.knob.set_default_value(self.default_spinbox.value())
+        self.knob.set_precision(self.precision_spinbox.value())
+        self.knob.set_sensitivity(self.sensitivity_spinbox.value())
+        self.knob.set_mode(self.mode_combobox.currentText())
+        self.knob.set_display_enabled(self.enable_display_checkbox.isChecked())
 
-        if self.knob_config.maximum_value < self.knob_config.minimum_value:
+        if self.knob.maximum_value < self.knob.minimum_value:
             self.show_invalid_min_max_prompt()
             return
 
-        if not (self.knob_config.minimum_value <= self.knob_config.default_value <= self.knob_config.maximum_value):
+        if not (self.knob.minimum_value <= self.knob.default_value <= self.knob.maximum_value):
             self.show_invalid_default_prompt()
             return
         pyfx_log.debug("Knob Config applied")
