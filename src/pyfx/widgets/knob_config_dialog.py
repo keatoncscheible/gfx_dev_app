@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QMessageBox
+from PySide6.QtWidgets import QAbstractButton, QDialog, QDialogButtonBox, QMessageBox
 
 from pyfx.knob import PyFxKnob
 from pyfx.logging import pyfx_log
@@ -19,27 +19,37 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
         self.sensitivity_spinbox.setValue(knob.sensitivity)
         self.mode_combobox.setCurrentText(knob.mode)
         self.enable_display_checkbox.setChecked(knob.display_enabled)
-        self.button_box.clicked.connect(self.apply_clicked)
+        self.button_box.clicked.connect(self.button_box_clicked)
         self.mode_combobox.currentTextChanged.connect(self.change_mode_settings)
 
-    def apply_clicked(self):
-        self.knob.set_minimum_value(self.minimum_spinbox.value())
-        self.knob.set_maximum_value(self.maximum_spinbox.value())
-        self.knob.set_default_value(self.default_spinbox.value())
-        self.knob.set_precision(self.precision_spinbox.value())
-        self.knob.set_sensitivity(self.sensitivity_spinbox.value())
-        self.knob.set_mode(self.mode_combobox.currentText())
-        self.knob.set_display_enabled(self.enable_display_checkbox.isChecked())
+    def button_box_clicked(self, button: QAbstractButton):
+        """
+        Handles the button box click event. Updates the knob configuration based on the dialog's settings if the
+        apply button was clicked.
+        """
+        standard_button = self.button_box.standardButton(button)
+        if standard_button == QDialogButtonBox.Apply:
+            pyfx_log.debug("Knob Config applied")
+            self.knob.set_minimum_value(self.minimum_spinbox.value())
+            self.knob.set_maximum_value(self.maximum_spinbox.value())
+            self.knob.set_default_value(self.default_spinbox.value())
+            self.knob.set_precision(self.precision_spinbox.value())
+            self.knob.set_sensitivity(self.sensitivity_spinbox.value())
+            self.knob.set_mode(self.mode_combobox.currentText())
+            self.knob.set_display_enabled(self.enable_display_checkbox.isChecked())
 
-        if self.knob.maximum_value < self.knob.minimum_value:
-            self.show_invalid_min_max_prompt()
-            return
+            if self.knob.maximum_value < self.knob.minimum_value:
+                self.show_invalid_min_max_prompt()
+                return
 
-        if not (self.knob.minimum_value <= self.knob.default_value <= self.knob.maximum_value):
-            self.show_invalid_default_prompt()
-            return
-        pyfx_log.debug("Knob Config applied")
-        super().accept()
+            if not (self.knob.minimum_value <= self.knob.default_value <= self.knob.maximum_value):
+                self.show_invalid_default_prompt()
+                return
+
+            super().accept()
+        else:
+            pyfx_log.debug("Knob Config aborted")
+            super().reject()
 
     def change_mode_settings(self, mode: str):
         if mode == "logarithmic":
