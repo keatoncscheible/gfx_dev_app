@@ -57,7 +57,12 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.set_pedal_color(self.pedal.pedal_color)
         self.set_text_color(self.pedal.text_color)
 
-    def contextMenuEvent(self, event):
+    def contextMenuEvent(self, event):  # noqa: N802
+        """
+        Overrides the context menu event to add custom actions like adding knobs, footswitches, and handling pedal
+        variants.
+        :param event: The event instance containing data about the context menu event.
+        """
         context_menu = QMenu(self)
 
         variants = self.pedal.variants
@@ -137,10 +142,18 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             self.pedal.set_text_color(color.name())
 
     def set_pedal_name(self, name: str):
+        """
+        Sets the name of the pedal.
+        :param name: The new name of the pedal.
+        """
         pyfx_log.debug(f"Pedal name changed from {self.pedal.name} to {name}")
         self.pedal_name_label.setText(name)
 
     def set_pedal_color(self, color: str):
+        """
+        Sets the color of the pedal.
+        :param color: The new color for the pedal.
+        """
         color = QColor(color)
         light_pedal_color, dark_pedal_color = calculate_color_gradient(color, 0.5, 0.5)
 
@@ -155,6 +168,10 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.setStyleSheet(style_sheet)
 
     def set_text_color(self, color: str):
+        """
+        Sets the text color for the pedal.
+        :param color: The new text color.
+        """
         color = QColor(color)
         style_sheet = f"""
             color: {color.name()};
@@ -166,6 +183,10 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             footswitch_widget.footswitch_name.setStyleSheet(style_sheet)
 
     def generate_knob_name(self):
+        """
+        Generates a unique name for a new knob.
+        :return: A string representing the new knob name.
+        """
         knob_idx = 1
         while True:
             knob_name = f"Knob {knob_idx}"
@@ -174,6 +195,10 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             knob_idx += 1
 
     def generate_footswitch_name(self):
+        """
+        Generates a unique name for a new footswitch.
+        :return: A string representing the new footswitch name.
+        """
         footswitch_idx = 1
         while True:
             footswitch_name = f"Footswitch {footswitch_idx}"
@@ -182,6 +207,10 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             footswitch_idx += 1
 
     def add_knob(self, knob: PyFxKnob):
+        """
+        Adds a knob to the pedal widget.
+        :param knob: The PyFxKnob object to be added.
+        """
         knob_widget = KnobComponent(knob=knob)
         self.knob_widgets[knob] = knob_widget
         knob_cnt = len(self.knob_widgets)
@@ -190,11 +219,19 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.knob_layout.addWidget(knob_widget, row, column)
 
     def remove_knob(self, knob: PyFxKnob):
+        """
+        Removes a knob from the pedal widget.
+        :param knob: The PyFxKnob object to be removed.
+        """
         self.knob_layout.removeWidget(self.knob_widgets[knob])
         self.knob_widgets[knob].deleteLater()
         del self.knob_widgets[knob]
 
     def add_footswitch(self, footswitch: PyFxFootswitch = None):
+        """
+        Adds a footswitch to the pedal widget.
+        :param footswitch: The PyFxFootswitch object to be added.
+        """
         footswitch_widget = FootswitchComponent(footswitch=footswitch)
         self.footswitch_widgets[footswitch] = footswitch_widget
         footswitch_cnt = len(self.footswitch_widgets)
@@ -203,29 +240,45 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.footswitch_layout.addWidget(footswitch_widget, row, column)
 
     def remove_footswitch(self, footswitch: FootswitchComponent):
+        """
+        Removes a footswitch from the pedal widget.
+        :param footswitch: The FootswitchComponent object to be removed.
+        """
         self.footswitch_layout.removeWidget(self.footswitch_widgets[footswitch])
         self.footswitch_widgets[footswitch].deleteLater()
         del self.footswitch_widgets[footswitch]
 
     def hide_all_knob_displays(self):
+        """
+        Hides the display for all knobs in the pedal widget.
+        """
         for knob_widget in self.knob_widgets.values():
             knob_widget.knob_editbox.hide()
             knob_widget.knob.set_display_enabled(False)
             knob_widget.update_knob_editbox_visibility()
 
     def show_all_knob_displays(self):
+        """
+        Shows the display for all knobs in the pedal widget.
+        """
         for knob_widget in self.knob_widgets.values():
             knob_widget.knob_editbox.show()
             knob_widget.knob.set_display_enabled(True)
             knob_widget.update_knob_editbox_visibility()
 
     def hide_all_footswitch_displays(self):
+        """
+        Hides the display for all footswitches in the pedal widget.
+        """
         for footswitch_widget in self.footswitch_widgets.values():
             footswitch_widget.footswitch_editbox.hide()
             footswitch_widget.footswitch.set_display_enabled(False)
             footswitch_widget.update_footswitch_editbox_visibility()
 
     def show_all_footswitch_displays(self):
+        """
+        Shows the display for all footswitches in the pedal widget.
+        """
         for footswitch_widget in self.footswitch_widgets.values():
             footswitch_widget.footswitch_editbox.show()
             footswitch_widget.footswitch.set_display_enabled(True)
