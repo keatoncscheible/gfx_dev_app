@@ -16,7 +16,7 @@ class AboutWidget(QWidget):
         self.initUI()
         self.setAttribute(Qt.WA_DeleteOnClose)
 
-    def initUI(self):
+    def initUI(self):  # noqa: N802
         """
         Initializes the UI components of the AboutWidget.
         """

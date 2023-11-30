@@ -76,14 +76,14 @@ class FootswitchComponent(QWidget, Ui_FootswitchComponent):
         """Updates the edit box when the footswitch is clicked."""
         self.update_footswitch_editbox()
 
-    def footswitch_toggled(self, state: bool):
+    def footswitch_toggled(self, state: bool):  # noqa: FBT001, ARG002
         """
         Updates the edit box when the footswitch state is toggled.
         :param state: The new state of the footswitch.
         """
         self.update_footswitch_editbox()
 
-    def contextMenuEvent(self, event):
+    def contextMenuEvent(self, event):  # noqa: N802
         """
         Overridden method to provide a context menu for the footswitch component.
         :param event: The event triggering the context menu.

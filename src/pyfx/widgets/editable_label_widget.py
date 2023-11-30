@@ -18,7 +18,7 @@ class CustomLineEdit(QLineEdit):
         super().__init__(parent)
         self.setStyleSheet("color: #000000;")
 
-    def focusOutEvent(self, event):
+    def focusOutEvent(self, event):  # noqa: N802
         """
         Handles the focus out event. Emits the editing_accepted signal.
         :param event: The focus out event.
@@ -26,7 +26,7 @@ class CustomLineEdit(QLineEdit):
         super().focusOutEvent(event)
         self.editing_accepted.emit()
 
-    def keyPressEvent(self, event):
+    def keyPressEvent(self, event):  # noqa: N802
         """
         Handles the key press event. Emits the editing_canceled signal if the Escape key is pressed.
         :param event: The key press event.
@@ -52,7 +52,7 @@ class EditableLabelWidget(QLabel):
         super().__init__(parent)
         self.editbox = None
 
-    def mouseDoubleClickEvent(self, event):
+    def mouseDoubleClickEvent(self, event):  # noqa: N802, ARG002
         """
         Handles the mouse double-click event to create an edit box for editing the label.
         :param event: The mouse double-click event.

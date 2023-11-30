@@ -42,7 +42,7 @@ class FootswitchWidget(QPushButton):
         elif footswitch_type == "momentary":
             self._configure_momentary(footswitch)
         elif footswitch_type == "mode":
-            self._configure_mode(footswitch)
+            self._configure_mode()
 
     def _disconnect_signals(self):
         """
@@ -65,7 +65,7 @@ class FootswitchWidget(QPushButton):
         except RuntimeError:
             pass
 
-    def _configure_latching(self, footswitch):
+    def _configure_latching(self, footswitch: PyFxFootswitch):
         """
         Configures the widget for latching footswitches.
         :param footswitch: The PyFxFootswitch instance.
@@ -74,7 +74,7 @@ class FootswitchWidget(QPushButton):
         self.setChecked(footswitch.state)
         self.toggled.connect(self.footswitch_toggled_cb)
 
-    def _configure_momentary(self, footswitch):
+    def _configure_momentary(self, footswitch: PyFxFootswitch):
         """
         Configures the widget for momentary footswitches.
         :param footswitch: The PyFxFootswitch instance.
@@ -84,7 +84,7 @@ class FootswitchWidget(QPushButton):
         self.pressed.connect(self.footswitch_pressed_cb)
         self.released.connect(self.footswitch_released_cb)
 
-    def _configure_mode(self, footswitch):
+    def _configure_mode(self):
         """
         Configures the widget for mode-switching footswitches.
         :param footswitch: The PyFxFootswitch instance.
@@ -112,7 +112,7 @@ class FootswitchWidget(QPushButton):
         self.setChecked(state)
         self.footswitch_released.emit()
 
-    def footswitch_toggled_cb(self, state: bool):
+    def footswitch_toggled_cb(self, state: bool):  # noqa: FBT001
         """
         Callback for when the footswitch state is toggled.
         :param state: The new state of the footswitch.

@@ -54,7 +54,7 @@ class KnobComponent(QWidget, Ui_KnobComponent):
         else:
             self.knob_editbox.setText(f"{round(value, round_amount)}")
 
-    def contextMenuEvent(self, event):
+    def contextMenuEvent(self, event):  # noqa: N802
         """
         Overridden method to provide a context menu for the knob component.
         :param event: The event triggering the context menu.

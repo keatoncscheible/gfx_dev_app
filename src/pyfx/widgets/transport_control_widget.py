@@ -76,7 +76,7 @@ class TransportControlWidget(QWidget, Ui_TransportControlWidget):
         pyfx_log.debug("Stop button pressed")
         self.stop.emit()
 
-    def loop_button_toggled(self, state: bool):
+    def loop_button_toggled(self, state: bool):  # noqa: FBT001
         """
         Handler for when the loop button's state is toggled.
         :param state: The new state of the loop button (True if the button is checked).

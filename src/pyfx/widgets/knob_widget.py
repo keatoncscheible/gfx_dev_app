@@ -83,7 +83,7 @@ class KnobWidget(QDial):
             float_value = 10 ** (value * self.precision / 20)
         self.knob.set_knob_value(float_value)
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):  # noqa: N802
         """
         Handles mouse press events. Right-clicks are treated as context menu events.
         :param event: The mouse event.
@@ -94,7 +94,7 @@ class KnobWidget(QDial):
         else:
             self.last_y = event.position().y()
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event):  # noqa: N802
         """
         Handles mouse move events to adjust the knob value.
         :param event: The mouse event.
@@ -116,14 +116,14 @@ class KnobWidget(QDial):
                 return
             self.setValue(new_value)
 
-    def mouseDoubleClickEvent(self, event):
+    def mouseDoubleClickEvent(self, event):  # noqa: N802, ARG002
         """
         Handles mouse double-click events to reset the knob to its default value.
         :param event: The mouse event.
         """
         self.set_knob_value(self.default_value)
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event):  # noqa: N802
         """
         Handles mouse release events. Currently, this method does not perform any action.
         :param event: The mouse event.
