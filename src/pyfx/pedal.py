@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
-
 from pyfx.component import PyFxComponent
 from pyfx.exceptions import (
     FootswitchAlreadyExistsError,
@@ -15,7 +13,20 @@ from pyfx.knob import PyFxKnob
 from pyfx.logging import pyfx_log
 
 
-class PyFxPedal(ABC, PyFxComponent):
+class PyFxPedal(PyFxComponent):
+    """
+    Represents a pedal in the PyFx system, handling various components and variants.
+
+    Attributes:
+        name (str): Name of the pedal.
+        knobs (dict[str, PyFxKnob]): Dictionary mapping knob names to PyFxKnob objects.
+        footswitches (dict[str, PyFxFootswitch]): Dictionary mapping footswitch names to PyFxFootswitch objects.
+        variant (PyFxPedalVariant | None): Current variant of the pedal.
+        variants (list[PyFxPedalVariant]): List of available variants for the pedal.
+        pedal_color (str): Hex color code for the pedal.
+        text_color (str): Hex color code for the pedal's text.
+    """
+
     def __init__(
         self,
         name: str,
@@ -57,6 +68,9 @@ class PyFxPedal(ABC, PyFxComponent):
                 self.add_footswitch(footswitch)
 
     def __reduce__(self):
+        """
+        Supports the pickle protocol by returning the class and its arguments for reconstruction.
+        """
         return (
             self.__class__,
             (
@@ -486,18 +500,24 @@ class PyFxPedal(ABC, PyFxComponent):
             for config_item in self.config_items:
                 config_item.modified = False
 
-    # @abstractmethod
-    # def process_audio(self, data):
-    #     """Abstract Process Audio Callback"""
-
 
 class PyFxPedalVariant(PyFxComponent):
+    """
+    Represents a variant of a PyFxPedal, which can have different configurations of knobs and footswitches.
+
+    Attributes:
+        name (str): Name of the variant.
+        knobs (dict[str, PyFxKnob]): Dictionary of knobs for this variant.
+        footswitches (dict[str, PyFxFootswitch]): Dictionary of footswitches for this variant.
+    """
+
     def __init__(
         self,
         name: str,
         knobs: dict[str, PyFxKnob],
         footswitches: dict[str, PyFxFootswitch],
     ):
+        super().__init__()
         self.name = name
         self.knobs = knobs
-        self.footswiches = footswitches
+        self.footswitches = footswitches
