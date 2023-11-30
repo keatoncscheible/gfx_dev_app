@@ -104,72 +104,6 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         pyfx_log.debug("File->Quit pressed")
         self.close()
 
-    """Pedal Menu Callbacks"""
-
-    def pedal__add_knob_cb(self):
-        pyfx_log.debug("Pedal->Add Knob pressed")
-        self.pedal.add_knob()
-
-    def pedal__add_footswitch_cb(self):
-        pyfx_log.debug("Pedal->Add Footswitch pressed")
-        self.pedal.add_footswitch()
-
-    """View Menu Callbacks"""
-
-    def view__knob_displays_cb(self, state: bool):
-        pyfx_log.debug(f"View->Knob Displays pressed: {state}")
-        if state:
-            self.pedal_widget.show_all_knob_displays()
-        else:
-            self.pedal_widget.hide_all_knob_displays()
-
-    def view__footswitch_displays_cb(self, state: bool):
-        pyfx_log.debug(f"View->Footswitch Displays pressed: {state}")
-        if state:
-            self.pedal_widget.show_all_footswitch_displays()
-        else:
-            self.pedal_widget.hide_all_footswitch_displays()
-
-    """Help Menu Callbacks"""
-
-    def help__about_cb(self):
-        pyfx_log.debug("About pressed")
-        self.about_widget = AboutWidget()
-        self.about_widget.show()
-
-    """Various Prompts"""
-
-    def show_invalid_pedal_prompt(self):
-        QMessageBox.warning(
-            self, "Invalid Pedal", "The folder that you selected does not contain a valid pedal configuration."
-        )
-
-    def show_no_open_pedal_prompt(self):
-        QMessageBox.warning(self, "No Open Pedal", "There is no open pedal.")
-
-    def show_save_pedal_prompt(self):
-        return QMessageBox.question(
-            self,
-            "Save Pedal?",
-            "There are changes to the current pedal. Would you like to save them?",
-            QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
-        )
-
-    def prompt_for_save_if_needed(self):
-        """Prompt the user to save if there are unsaved changes
-
-        Returns:
-            True if the user saved or there was nothing to save
-            False if the user decided to cancel the operation
-        """
-        if self.pedal_widget and self.pedal.is_modified:
-            response = self.show_save_pedal_prompt()
-            if response == QMessageBox.Yes:
-                self.pedal_builder.save_pedal()
-            elif response == QMessageBox.Cancel:
-                return False
-        return True
-
     def new_pedal(self):
         """
         Creates a new pedal and initializes the pedal widget.
@@ -228,6 +162,72 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         except PedalDoesNotExistError:
             pass
 
+    """Pedal Menu Callbacks"""
+
+    def pedal__add_knob_cb(self):
+        pyfx_log.debug("Pedal->Add Knob pressed")
+        self.pedal.add_knob()
+
+    def pedal__add_footswitch_cb(self):
+        pyfx_log.debug("Pedal->Add Footswitch pressed")
+        self.pedal.add_footswitch()
+
+    """View Menu Callbacks"""
+
+    def view__knob_displays_cb(self, state: bool):  # noqa: FBT001
+        pyfx_log.debug(f"View->Knob Displays pressed: {state}")
+        if state:
+            self.pedal_widget.show_all_knob_displays()
+        else:
+            self.pedal_widget.hide_all_knob_displays()
+
+    def view__footswitch_displays_cb(self, state: bool):  # noqa: FBT001
+        pyfx_log.debug(f"View->Footswitch Displays pressed: {state}")
+        if state:
+            self.pedal_widget.show_all_footswitch_displays()
+        else:
+            self.pedal_widget.hide_all_footswitch_displays()
+
+    """Help Menu Callbacks"""
+
+    def help__about_cb(self):
+        pyfx_log.debug("About pressed")
+        self.about_widget = AboutWidget()
+        self.about_widget.show()
+
+    """Various Prompts"""
+
+    def show_invalid_pedal_prompt(self):
+        QMessageBox.warning(
+            self, "Invalid Pedal", "The folder that you selected does not contain a valid pedal configuration."
+        )
+
+    def show_no_open_pedal_prompt(self):
+        QMessageBox.warning(self, "No Open Pedal", "There is no open pedal.")
+
+    def show_save_pedal_prompt(self):
+        return QMessageBox.question(
+            self,
+            "Save Pedal?",
+            "There are changes to the current pedal. Would you like to save them?",
+            QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
+        )
+
+    def prompt_for_save_if_needed(self):
+        """Prompt the user to save if there are unsaved changes
+
+        Returns:
+            True if the user saved or there was nothing to save
+            False if the user decided to cancel the operation
+        """
+        if self.pedal_widget and self.pedal.is_modified:
+            response = self.show_save_pedal_prompt()
+            if response == QMessageBox.Yes:
+                self.pedal_builder.save_pedal()
+            elif response == QMessageBox.Cancel:
+                return False
+        return True
+
     """Helper Functions"""
 
     def adjust_and_center(self):
@@ -252,7 +252,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
 
     """Widget Method Overrides"""
 
-    def closeEvent(self, event):
+    def closeEvent(self, event):  # noqa: N802
         """
         Override the close event to prompt for save if needed and stop audio processor.
         """
