@@ -15,40 +15,66 @@ from pyfx.widgets.pedal_widget import PedalWidget
 
 
 class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
+    """
+    Main window for the Pedal Builder application.
+    Handles the creation, opening, saving, and display of pedal configurations.
+    """
+
     audio_assets = Path("src/pyfx/assets/audio")
 
     def __init__(self, pedal_builder: PedalBuilder, audio_processor: AudioProcessor):
+        """
+        Initialize the main window.
+
+        :param pedal_builder: PedalBuilder instance used for managing pedal objects.
+        :param audio_processor: AudioProcessor instance used for audio playback control.
+        """
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon("src/pyfx/assets/pyfx_logo.png"))
         self.pedal_builder = pedal_builder
         self.audio_processor = audio_processor
-        if pedal_builder.pedal is not None:
+        self.initialize_pedal_widget()
+        self.setup_transport_control()
+        self.adjust_and_center()
+
+    def initialize_pedal_widget(self):
+        """
+        Initialize the pedal widget if a pedal is already present in the pedal builder.
+        """
+        if self.pedal_builder.pedal:
             self.pedal: PyFxPedal = self.pedal_builder.pedal
             self.pedal_widget = PedalWidget(pedal=self.pedal)
             self.pedal_layout.insertWidget(1, self.pedal_widget)
-            all_knobs_displays_enabled = self.pedal_widget.knob_widgets and all(
+            self.update_display_actions()
+        else:
+            self.pedal: PyFxPedal = None
+            self.pedal_widget: PedalWidget = None
+
+    def update_display_actions(self):
+        """
+        Update the check states of display-related actions in the view menu.
+        """
+        if self.pedal_widget:
+            all_knobs_displays_enabled = len(self.pedal_widget.knob_widgets) > 0 and all(
                 knob.display_enabled for knob in self.pedal_widget.knob_widgets.keys()
             )
             self.action_knob_displays.setChecked(all_knobs_displays_enabled)
-            all_footswitch_displays_enabled = self.pedal_widget.footswitch_widgets and all(
+            all_footswitch_displays_enabled = len(self.pedal_widget.footswitch_widgets) > 0 and all(
                 footswitch.display_enabled for footswitch in self.pedal_widget.footswitch_widgets.keys()
             )
             self.action_footswitch_displays.setChecked(all_footswitch_displays_enabled)
 
-        else:
-            self.pedal: PyFxPedal = None
-            self.pedal_widget = None
-
-        # Setup transport control
+    def setup_transport_control(self):
+        """
+        Setup the transport control widget with audio folder and connections to audio_processor.
+        """
         self.transport_control.set_audio_folder(self.audio_assets)
-        self.transport_control.play.connect(audio_processor.play)
-        self.transport_control.pause.connect(audio_processor.pause)
-        self.transport_control.stop.connect(audio_processor.stop)
-        self.transport_control.loop.connect(audio_processor.loop)
-        self.transport_control.set_audio_file.connect(audio_processor.set_audio_file)
-
-        self.adjust_and_center()
+        self.transport_control.play.connect(self.audio_processor.play)
+        self.transport_control.pause.connect(self.audio_processor.pause)
+        self.transport_control.stop.connect(self.audio_processor.stop)
+        self.transport_control.loop.connect(self.audio_processor.loop)
+        self.transport_control.set_audio_file.connect(self.audio_processor.set_audio_file)
 
     """File Menu Callbacks"""
 
@@ -111,26 +137,23 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.about_widget = AboutWidget()
         self.about_widget.show()
 
+    """Various Prompts"""
+
     def show_invalid_pedal_prompt(self):
-        pedal_name_missing_prompt = QMessageBox()
-        pedal_name_missing_prompt.setWindowTitle("Invalid Pedal")
-        pedal_name_missing_prompt.setText("The folder that you selected does not contain a valid pedal configuration.")
-        pedal_name_missing_prompt.setStandardButtons(QMessageBox.Ok)
-        pedal_name_missing_prompt.exec_()
+        QMessageBox.warning(
+            self, "Invalid Pedal", "The folder that you selected does not contain a valid pedal configuration."
+        )
 
     def show_no_open_pedal_prompt(self):
-        nonexistent_pedal_prompt = QMessageBox()
-        nonexistent_pedal_prompt.setWindowTitle("No Open Pedal")
-        nonexistent_pedal_prompt.setText("There is no open pedal")
-        nonexistent_pedal_prompt.setStandardButtons(QMessageBox.Ok)
-        nonexistent_pedal_prompt.exec_()
+        QMessageBox.warning(self, "No Open Pedal", "There is no open pedal.")
 
     def show_save_pedal_prompt(self):
-        nonexistent_pedal_prompt = QMessageBox()
-        nonexistent_pedal_prompt.setWindowTitle("Save Pedal?")
-        nonexistent_pedal_prompt.setText("There are changes to the current pedal. Would you like to save them")
-        nonexistent_pedal_prompt.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
-        return nonexistent_pedal_prompt.exec_()
+        return QMessageBox.question(
+            self,
+            "Save Pedal?",
+            "There are changes to the current pedal. Would you like to save them?",
+            QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel,
+        )
 
     def prompt_for_save_if_needed(self):
         """Prompt the user to save if there are unsaved changes
@@ -140,14 +163,20 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             False if the user decided to cancel the operation
         """
         if self.pedal_widget and self.pedal.is_modified:
-            save_pedal_prompt_response = self.show_save_pedal_prompt()
-            if save_pedal_prompt_response == QMessageBox.Yes:
+            response = self.show_save_pedal_prompt()
+            if response == QMessageBox.Yes:
                 self.pedal_builder.save_pedal()
-            elif save_pedal_prompt_response == QMessageBox.Cancel:
+            elif response == QMessageBox.Cancel:
                 return False
         return True
 
     def new_pedal(self):
+        """
+        Creates a new pedal and initializes the pedal widget.
+
+        This function first closes any currently open pedal, then uses the pedal builder to create a new pedal instance.
+        After creating the new pedal, it initializes and displays the pedal widget in the main window layout.
+        """
         self.close_pedal()
         self.pedal_builder.create_new_pedal()
         self.pedal = self.pedal_builder.pedal
@@ -156,6 +185,14 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.adjust_and_center()
 
     def open_pedal(self, name: str):
+        """
+        Opens an existing pedal by name.
+
+        :param name: The name of the pedal to be opened.
+
+        This function closes the current pedal (if any), then uses the pedal builder to open the specified pedal.
+        It then initializes the pedal widget with the opened pedal and updates the main window layout.
+        """
         pyfx_log.debug(f"Opening {name} pedal")
         self.close_pedal()
         self.pedal_builder.open_pedal(name)
@@ -165,6 +202,12 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.adjust_and_center()
 
     def close_pedal(self):
+        """
+        Closes the currently open pedal.
+
+        If a pedal is currently open, this function will delegate to the pedal builder to handle the closing process.
+        It then removes the pedal widget from the main window layout and ensures that the window is properly adjusted.
+        """
         if self.pedal_widget:
             self.pedal_builder.close_pedal()
             self.pedal_layout.removeWidget(self.pedal_widget)
@@ -174,6 +217,12 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             self.adjust_and_center()
 
     def save_pedal(self):
+        """
+        Saves the current state of the pedal.
+
+        This function attempts to save the current pedal using the pedal builder.
+        If the pedal does not exist, it catches the `PedalDoesNotExistError` exception.
+        """
         try:
             self.pedal_builder.save_pedal()
         except PedalDoesNotExistError:
@@ -182,6 +231,9 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
     """Helper Functions"""
 
     def adjust_and_center(self):
+        """
+        Adjust the size and position of the main window.
+        """
         self.update_margins()
         self.adjustSize()
         self.central_widget.adjustSize()
@@ -192,17 +244,18 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.move(x, y)
 
     def update_margins(self):
-        for i in range(self.pedal_layout.count()):
-            item = self.pedal_layout.itemAt(i)
-            widget = item.widget()
-            if widget and isinstance(widget, PedalWidget):
-                self.pedal_layout.setContentsMargins(20, 20, 20, 20)
-                return
-        self.pedal_layout.setContentsMargins(0, 0, 0, 0)
+        """
+        Update the margins of the pedal layout based on the presence of a pedal widget.
+        """
+        margins = (20, 20, 20, 20) if self.pedal_widget else (0, 0, 0, 0)
+        self.pedal_layout.setContentsMargins(*margins)
 
     """Widget Method Overrides"""
 
     def closeEvent(self, event):
+        """
+        Override the close event to prompt for save if needed and stop audio processor.
+        """
         if self.prompt_for_save_if_needed():
             self.close_pedal()
             self.audio_processor.stop()
