@@ -254,7 +254,7 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         """
         for knob_widget in self.knob_widgets.values():
             knob_widget.knob_editbox.hide()
-            knob_widget.knob.set_display_enabled(False)
+            knob_widget.knob.set_display_disabled()
             knob_widget.update_knob_editbox_visibility()
 
     def show_all_knob_displays(self):
@@ -263,7 +263,7 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         """
         for knob_widget in self.knob_widgets.values():
             knob_widget.knob_editbox.show()
-            knob_widget.knob.set_display_enabled(True)
+            knob_widget.knob.set_display_enabled()
             knob_widget.update_knob_editbox_visibility()
 
     def hide_all_footswitch_displays(self):
@@ -272,7 +272,7 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         """
         for footswitch_widget in self.footswitch_widgets.values():
             footswitch_widget.footswitch_editbox.hide()
-            footswitch_widget.footswitch.set_display_enabled(False)
+            footswitch_widget.footswitch.set_display_disabled()
             footswitch_widget.update_footswitch_editbox_visibility()
 
     def show_all_footswitch_displays(self):
@@ -281,5 +281,5 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         """
         for footswitch_widget in self.footswitch_widgets.values():
             footswitch_widget.footswitch_editbox.show()
-            footswitch_widget.footswitch.set_display_enabled(True)
+            footswitch_widget.footswitch.set_display_enabled()
             footswitch_widget.update_footswitch_editbox_visibility()

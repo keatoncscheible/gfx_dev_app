@@ -89,10 +89,16 @@ class PyFxFootswitch(PyFxComponent):
         self.mode_idx = (self.mode_idx + 1) % len(self.modes)
         self.set_mode(self.modes[self.mode_idx])
 
-    def set_display_enabled(self, enable: bool):
-        if self.display_enabled != enable:
-            pyfx_log.debug(f"{'Enable' if enable else 'Disable'} {self.name} footswitch display")
-            self.display_enabled = enable
+    def set_display_enabled(self):
+        if not self.display_enabled:
+            pyfx_log.debug(f"Enable {self.name} footswitch display")
+            self.display_enabled = True
+            self.modified = True
+
+    def set_display_disabled(self):
+        if self.display_enabled:
+            pyfx_log.debug(f"Disable {self.name} footswitch display")
+            self.display_enabled = False
             self.modified = True
 
     """Change Footswitch Name"""

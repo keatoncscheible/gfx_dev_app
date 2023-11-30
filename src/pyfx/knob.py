@@ -82,9 +82,16 @@ class PyFxKnob(PyFxComponent):
             self.value = self.default_value
             self.modified = True
 
-    def set_display_enabled(self, enable: bool):
-        if self.display_enabled != enable:
-            self.display_enabled = enable
+    def set_display_enabled(self):
+        if not self.display_enabled:
+            pyfx_log.debug(f"Enable {self.name} knob display")
+            self.display_enabled = True
+            self.modified = True
+
+    def set_display_disabled(self):
+        if self.display_enabled:
+            pyfx_log.debug(f"Disable {self.name} knob display")
+            self.display_enabled = False
             self.modified = True
 
     """Set Knob Value"""

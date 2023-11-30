@@ -61,7 +61,10 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
         self.knob.set_precision(self.precision_spinbox.value())
         self.knob.set_sensitivity(self.sensitivity_spinbox.value())
         self.knob.set_mode(self.mode_combobox.currentText())
-        self.knob.set_display_enabled(self.enable_display_checkbox.isChecked())
+        if self.enable_display_checkbox.isChecked():
+            self.knob.set_display_enabled()
+        else:
+            self.knob.set_display_disabled()
 
         if self.knob.maximum_value < self.knob.minimum_value:
             self.show_invalid_min_max_prompt()

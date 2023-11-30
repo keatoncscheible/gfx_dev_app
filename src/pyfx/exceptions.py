@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class KnobAlreadyExistsError(Exception):
     def __init__(self):
         super().__init__()
@@ -49,7 +52,7 @@ class PedalConfigNotFoundError(Exception):
 
 
 class NewPedalConfigError(Exception):
-    def __init__(self, message: str = None):
+    def __init__(self, message: Optional[str] = None):
         super().__init__(message)
 
 

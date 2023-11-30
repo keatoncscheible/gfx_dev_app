@@ -65,7 +65,10 @@ class FootswitchConfigDialog(QDialog, Ui_FootswitchConfigDialog):
         """
         footswitch_type = self.footswitch_type_combobox.currentText()
         self.footswitch.set_footswitch_type(footswitch_type)
-        self.footswitch.set_display_enabled(self.enable_display_checkbox.isChecked())
+        if self.enable_display_checkbox.isChecked():
+            self.footswitch.set_display_enabled()
+        else:
+            self.footswitch.set_display_disabled()
         if footswitch_type == "latching":
             self.footswitch.set_state(True)
             self.footswitch.set_default_state(True)
