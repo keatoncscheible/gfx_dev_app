@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import Optional
+from abc import ABC
 
 from pyfx.component import PyFxComponent
 from pyfx.exceptions import (
@@ -9,7 +8,6 @@ from pyfx.exceptions import (
     FootswitchDoesNotExistError,
     KnobAlreadyExistsError,
     KnobDoesNotExistError,
-    PedalVariantAlreadyExistsError,
     PedalVariantDoesNotExistError,
 )
 from pyfx.footswitch import PyFxFootswitch

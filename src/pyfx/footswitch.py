@@ -9,11 +9,11 @@ class PyFxFootswitch(PyFxComponent):
         self,
         name: str,
         footswitch_type: str = "latching",
-        default_state: bool = True,
+        default_state: bool = True,  # noqa: FBT001, FBT002
         state: Optional[bool] = None,
         mode: Optional[str] = None,
         modes: Optional[list[str]] = None,
-        display_enabled: bool = False,
+        display_enabled: bool = False,  # noqa: FBT001, FBT002
     ):
         super().__init__()
         self.name = name
@@ -55,13 +55,13 @@ class PyFxFootswitch(PyFxComponent):
             self.footswitch_type = footswitch_type
             self.modified = True
 
-    def set_default_state(self, state: bool):
+    def set_default_state(self, state: bool):  # noqa: FBT001
         if self.default_state != state:
             pyfx_log.debug(f"Set {self.name} footswitch default state to {state}")
             self.default_state = state
             self.modified = True
 
-    def set_state(self, state: bool):
+    def set_state(self, state: bool):  # noqa: FBT001
         if self.state != state:
             pyfx_log.debug(f"Set {self.name} footswitch state to {state}")
             self.state = state
@@ -114,20 +114,20 @@ class PyFxFootswitch(PyFxComponent):
 
     def add_change_footswitch_name_observer(self, observer):
         pyfx_log.debug(
-            f"Adding {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Adding {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._change_footswitch_name_observers.append(observer)
 
     def remove_change_footswitch_name_observer(self, observer):
         pyfx_log.debug(
-            f"Removing {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Removing {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._change_footswitch_name_observers.remove(observer)
 
     def notify_change_footswitch_name_observers(self, old_name: str, new_name: str):
         for observer in self._change_footswitch_name_observers:
             pyfx_log.debug(
-                f"Calling {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+                f"Calling {self.name} footswitch change footswitch name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
             observer(old_name, new_name)
 
@@ -139,19 +139,19 @@ class PyFxFootswitch(PyFxComponent):
 
     def add_remove_footswitch_observer(self, observer):
         pyfx_log.debug(
-            f"Adding {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Adding {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._remove_footswitch_observers.append(observer)
 
     def remove_remove_footswitch_observer(self, observer):
         pyfx_log.debug(
-            f"Removing {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Removing {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._remove_footswitch_observers.remove(observer)
 
     def notify_remove_footswitch_observers(self):
         for observer in self._remove_footswitch_observers:
             pyfx_log.debug(
-                f"Calling {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+                f"Calling {self.name} footswitch remove footswitch observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
             observer(self)

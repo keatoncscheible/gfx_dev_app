@@ -12,7 +12,7 @@ class PyFxKnob(PyFxComponent):
         precision: float = 0.01,
         sensitivity: float = 1,
         mode: str = "linear",
-        display_enabled: bool = False,
+        display_enabled: bool = False,  # noqa: FBT001, FBT002
         value: float = 0.5,
     ):
         super().__init__()
@@ -105,20 +105,20 @@ class PyFxKnob(PyFxComponent):
 
     def add_set_knob_value_observer(self, observer):
         pyfx_log.debug(
-            f"Adding {self.name} knob set knob value observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Adding {self.name} knob set knob value observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._set_knob_value_observers.append(observer)
 
     def remove_set_knob_value_observer(self, observer):
         pyfx_log.debug(
-            f"Removing {self.name} knob set knob value observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Removing {self.name} knob set knob value observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._set_knob_value_observers.remove(observer)
 
     def notify_set_knob_value_observers(self, value: float):
         for observer in self._set_knob_value_observers:
             pyfx_log.debug(
-                f"Calling {self.name} knob set knob value observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+                f"Calling {self.name} knob set knob value observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
             observer(value)
 
@@ -134,20 +134,20 @@ class PyFxKnob(PyFxComponent):
 
     def add_change_knob_name_observer(self, observer):
         pyfx_log.debug(
-            f"Adding {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Adding {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._change_knob_name_observers.append(observer)
 
     def remove_change_knob_name_observer(self, observer):
         pyfx_log.debug(
-            f"Removing {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Removing {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._change_knob_name_observers.remove(observer)
 
     def notify_change_knob_name_observers(self, old_name: str, new_name: str):
         for observer in self._change_knob_name_observers:
             pyfx_log.debug(
-                f"Calling {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+                f"Calling {self.name} knob change knob name observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
             observer(old_name, new_name)
 
@@ -165,13 +165,13 @@ class PyFxKnob(PyFxComponent):
 
     def remove_remove_knob_observer(self, observer):
         pyfx_log.debug(
-            f"Removing {self.name} knob remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+            f"Removing {self.name} knob remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
         )
         self._remove_knob_observers.remove(observer)
 
     def notify_remove_knob_observers(self):
         for observer in self._remove_knob_observers:
             pyfx_log.debug(
-                f"Calling {self.name} knob remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"
+                f"Calling {self.name} knob remove knob observer: {observer.__self__.__class__.__name__}.{observer.__name__}"  # noqa: E501
             )
             observer(self)
