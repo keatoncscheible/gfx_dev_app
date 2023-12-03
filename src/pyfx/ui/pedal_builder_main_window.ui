@@ -142,6 +142,8 @@
     </property>
     <addaction name="action_add_knob"/>
     <addaction name="action_add_footswitch"/>
+    <addaction name="separator"/>
+    <addaction name="action_reload"/>
    </widget>
    <widget class="QMenu" name="menu_view">
     <property name="title">
@@ -240,6 +242,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="action_reload">
+   <property name="text">
+    <string>Reload</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
  </widget>
@@ -413,6 +423,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_reload</sender>
+   <signal>triggered()</signal>
+   <receiver>PedalBuilderMainWindow</receiver>
+   <slot>pedal__reload_cb()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>help__about_cb()</slot>
@@ -425,5 +451,6 @@
   <slot>pedal__add_footswitch_cb()</slot>
   <slot>view__knob_displays_cb(bool)</slot>
   <slot>view__footswitch_displays_cb(bool)</slot>
+  <slot>pedal__reload_cb()</slot>
  </slots>
 </ui>

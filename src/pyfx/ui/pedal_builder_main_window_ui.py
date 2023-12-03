@@ -49,6 +49,8 @@ class Ui_PedalBuilderMainWindow(object):
         self.action_footswitch_displays = QAction(PedalBuilderMainWindow)
         self.action_footswitch_displays.setObjectName(u"action_footswitch_displays")
         self.action_footswitch_displays.setCheckable(True)
+        self.action_reload = QAction(PedalBuilderMainWindow)
+        self.action_reload.setObjectName(u"action_reload")
         self.central_widget = QWidget(PedalBuilderMainWindow)
         self.central_widget.setObjectName(u"central_widget")
         self.verticalLayout = QVBoxLayout(self.central_widget)
@@ -115,6 +117,8 @@ class Ui_PedalBuilderMainWindow(object):
         self.menu_file.addSeparator()
         self.menu_pedal.addAction(self.action_add_knob)
         self.menu_pedal.addAction(self.action_add_footswitch)
+        self.menu_pedal.addSeparator()
+        self.menu_pedal.addAction(self.action_reload)
         self.menu_view.addAction(self.action_knob_displays)
         self.menu_view.addAction(self.action_footswitch_displays)
 
@@ -129,6 +133,7 @@ class Ui_PedalBuilderMainWindow(object):
         self.action_add_footswitch.triggered.connect(PedalBuilderMainWindow.pedal__add_footswitch_cb)
         self.action_knob_displays.toggled.connect(PedalBuilderMainWindow.view__knob_displays_cb)
         self.action_footswitch_displays.toggled.connect(PedalBuilderMainWindow.view__footswitch_displays_cb)
+        self.action_reload.triggered.connect(PedalBuilderMainWindow.pedal__reload_cb)
 
         QMetaObject.connectSlotsByName(PedalBuilderMainWindow)
     # setupUi
@@ -174,6 +179,10 @@ class Ui_PedalBuilderMainWindow(object):
         self.action_footswitch_displays.setText(QCoreApplication.translate("PedalBuilderMainWindow", u"Footswitch Displays", None))
 #if QT_CONFIG(shortcut)
         self.action_footswitch_displays.setShortcut(QCoreApplication.translate("PedalBuilderMainWindow", u"Ctrl+F", None))
+#endif // QT_CONFIG(shortcut)
+        self.action_reload.setText(QCoreApplication.translate("PedalBuilderMainWindow", u"Reload", None))
+#if QT_CONFIG(shortcut)
+        self.action_reload.setShortcut(QCoreApplication.translate("PedalBuilderMainWindow", u"Ctrl+R", None))
 #endif // QT_CONFIG(shortcut)
         self.menu_help.setTitle(QCoreApplication.translate("PedalBuilderMainWindow", u"Help", None))
         self.menu_file.setTitle(QCoreApplication.translate("PedalBuilderMainWindow", u"File", None))
