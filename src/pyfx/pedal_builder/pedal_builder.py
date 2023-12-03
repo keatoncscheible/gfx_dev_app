@@ -54,8 +54,8 @@ def pedal_folder_name(pedal_name: str):
     return pedal_name.lower().replace(" ", "_")
 
 
-def previous_pedal_file(root_pedal_folder: Path):
-    return root_pedal_folder / "previous_pedal"
+def startup_config_file(root_pedal_folder: Path):
+    return root_pedal_folder / "startup.cfg"
 
 
 def pedal_folder(root_pedal_folder: Path, pedal_name: str):
@@ -155,7 +155,7 @@ class PedalBuilder:
         self.root_pedal_folder = root_pedal_folder
         self.audio_processor = audio_processor
         try:
-            with open(previous_pedal_file(self.root_pedal_folder)) as file:
+            with open(startup_config_file(self.root_pedal_folder)) as file:
                 pedal_name = file.read()
             self.open_pedal(pedal_name)
         except FileNotFoundError:
@@ -202,7 +202,7 @@ class PedalBuilder:
         self.pedal.add_change_footswitch_name_observer(self.change_footswitch_name)
         self.pedal.reset_modified_flags()
         self.update_audio_processor()
-        self.update_previous_pedal_file()
+        self.update_startup_config_file()
 
     """Close Pedal"""
 
@@ -255,7 +255,7 @@ class PedalBuilder:
         self.generate_pedal_module(self.pedal.name, [variant.name for variant in self.pedal.variants.values()])
         self.generate_pedal_variant_base_module(self.pedal.name)
 
-        self.update_previous_pedal_file()
+        self.update_startup_config_file()
         self.pedal.reset_modified_flags()
         self.temporary = False
         self.prev_pedal_name = None
@@ -497,13 +497,13 @@ class PedalBuilder:
         with open(pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, variant.name), "w") as file:
             file.write(pedal_variant_file_contents)
 
-    def update_previous_pedal_file(self):
-        with open(previous_pedal_file(self.root_pedal_folder), "w") as file:
+    def update_startup_config_file(self):
+        with open(startup_config_file(self.root_pedal_folder), "w") as file:
             file.write(self.pedal.name)
 
-    def remove_previous_pedal_file(self):
+    def remove_startup_config_file(self):
         try:
-            previous_pedal_file(self.root_pedal_folder).unlink()
+            startup_config_file(self.root_pedal_folder).unlink()
         except FileNotFoundError:
             pass
 
