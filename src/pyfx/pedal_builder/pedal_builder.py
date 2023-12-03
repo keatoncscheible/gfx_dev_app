@@ -284,7 +284,7 @@ class PedalBuilder:
             file.write("\n")
             file.write("from __future__ import annotations\n")
             file.write("\n")
-            for variant_name in variant_names:
+            for variant_name in sorted(variant_names):
                 file.write(
                     f"from {pedal_variant_module_name(pedal_name, variant_name)} import {pedal_variant_class_name(pedal_name, variant_name)}\n"  # noqa: E501
                 )
