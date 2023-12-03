@@ -166,6 +166,7 @@ class PedalBuilder:
         self.new_variants: list[PyFxPedalVariant] = []
         self.knob_name_changes: dict[str, str] = {}
         self.footswitch_name_changes: dict[str, str] = {}
+        self.variant_name_changes: dict[str, str] = {}
 
     """Create New Pedal"""
 
@@ -227,7 +228,7 @@ class PedalBuilder:
                 pedal_folder(self.root_pedal_folder, self.pedal.name)
             )
             # Rename pedal variants in updated folder to have the new pedal name
-            for variant in self.pedal.variants:
+            for variant in self.pedal.variants.values():
                 pedal_variant_module_to_update = pedal_folder(
                     self.root_pedal_folder, self.pedal.name
                 ) / pedal_variant_module_filename(self.prev_pedal_name, variant.name)
@@ -238,10 +239,10 @@ class PedalBuilder:
         for variant in self.new_variants:
             self.generate_pedal_variant_module(self.pedal.name, variant.name)
 
-        for variant in self.pedal.variants:
+        for variant in self.pedal.variants.values():
             self.update_pedal_variant(variant)
 
-        self.generate_pedal_module(self.pedal.name, [variant.name for variant in self.pedal.variants])
+        self.generate_pedal_module(self.pedal.name, [variant.name for variant in self.pedal.variants.values()])
         self.generate_pedal_variant_base_module(self.pedal.name)
 
         self.update_previous_pedal_file()
@@ -251,6 +252,7 @@ class PedalBuilder:
         self.new_variants = []
         self.knob_name_changes = {}
         self.footswitch_name_changes = {}
+        self.variant_name_changes = {}
 
     def generate_pedal_module(self, pedal_name: str, variant_names: str):
         pyfx_log.debug(f"Generating {pedal_name} module")
@@ -322,15 +324,21 @@ class PedalBuilder:
                 file.write("        }\n")
             else:
                 file.write("        footswitches = {}\n")
-            file.write("        variants = [\n")
-            for variant_name in variant_names:
-                file.write(f"            {pedal_variant_class_name(pedal_name, variant_name)}(\n")
-                file.write(f'                name="{variant_name}",\n')
-                file.write("                knobs=knobs,\n")
-                file.write("                footswitches=footswitches,\n")
-                file.write("            ),\n")
-            file.write("        ]\n")
-            file.write("        variant = variants[0]\n")
+            file.write("        variants = {\n")
+            if variant_names:
+                for variant_name in variant_names:
+                    file.write(f'            "{variant_name}": {pedal_variant_class_name(pedal_name, variant_name)}(\n')
+                    file.write(f'                name="{variant_name}",\n')
+                    file.write("                knobs=knobs,\n")
+                    file.write("                footswitches=footswitches,\n")
+                    file.write("            ),\n")
+                file.write("        }\n")
+            else:
+                file.write("        variants = {}\n")
+            if self.pedal:
+                file.write(f'        variant = variants["{self.pedal.variant.name}"]\n')
+            else:
+                file.write(f'        variant = variants["{variant_names[0]}"]\n')
             file.write('        pedal_color = "#0000FF"\n')
             file.write('        text_color = "#FFFFFF"\n')
             file.write("        super().__init__(\n")
@@ -500,6 +508,11 @@ class PedalBuilder:
 
     def change_pedal_variant_name(self, old_variant_name: str, new_variant_name: str):
         pyfx_log.debug(f"Changing {old_variant_name} pedal variant to {new_variant_name}")
+        for old_variant_name_in_dict, new_variant_name_in_dict in self.variant_name_changes.copy().items():
+            if old_variant_name == new_variant_name_in_dict:
+                self.variant_name_changes[old_variant_name_in_dict] = new_variant_name
+                return
+        self.variant_name_changes[old_variant_name] = new_variant_name
 
     def change_pedal_name(self, old_pedal_name: str, new_pedal_name: str):
         pyfx_log.debug(f"Changing pedal name from {old_pedal_name} to {new_pedal_name}")

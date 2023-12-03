@@ -55,6 +55,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     pedal_folder = Path(args.pedal_folder)
-    # if pedal_folder.exists():
-    #     shutil.rmtree(pedal_folder)
+    if pedal_folder.exists():
+        shutil.rmtree(pedal_folder)
     pedal_builder_app(pedal_folder)

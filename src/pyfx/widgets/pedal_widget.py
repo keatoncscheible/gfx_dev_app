@@ -107,7 +107,7 @@ class PedalWidget(QFrame, Ui_PedalWidget):
             pyfx_log.debug(f"Variant name changed from {variant_name} to {new_variant_name}")
             self.pedal.change_variant_name(variant_name, new_variant_name)
 
-        for variant in self.pedal.variants:
+        for variant in self.pedal.variants.values():
             select_variant_action = select_variant_menu.addAction(variant.name)
             select_variant_action.setCheckable(True)
             select_variant_action.setChecked(variant == self.pedal.variant)

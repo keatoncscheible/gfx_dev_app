@@ -33,14 +33,14 @@ class PyFxPedal(PyFxComponent):
         knobs: dict[str, PyFxKnob] | None = None,
         footswitches: dict[str, PyFxFootswitch] | None = None,
         variant: PyFxPedalVariant | None = None,
-        variants: list[PyFxPedalVariant] | None = None,
+        variants: dict[str, PyFxPedalVariant] | None = None,
         pedal_color: str = "#0000FF",
         text_color: str = "#FFFFFF",
     ):
         super().__init__()
         self.name = name
         self.variant = variant
-        self.variants = variants if variants is not None else []
+        self.variants = variants if variants is not None else {}
         self.pedal_color = pedal_color
         self.text_color = text_color
         self._change_pedal_name_observers = []
@@ -311,7 +311,7 @@ class PyFxPedal(PyFxComponent):
 
     def set_variant(self, variant_name: str):
         try:
-            variant = next(variant for variant in self.variants if variant.name == variant_name)
+            variant = next(variant for variant in self.variants.values() if variant.name == variant_name)
         except StopIteration as err:
             raise PedalVariantDoesNotExistError() from err
 
@@ -343,10 +343,10 @@ class PyFxPedal(PyFxComponent):
     """Add Variant"""
 
     def add_variant(self, variant_name: str):
-        if variant_name not in [variant.name for variant in self.variants]:
+        if variant_name not in [variant.name for variant in self.variants.values()]:
             pyfx_log.debug(f"Add {variant_name} {self.name} pedal variant")
             variant = PyFxPedalVariant(name=variant_name, knobs=self.knobs, footswitches=self.footswitches)
-            self.variants.append(variant)
+            self.variants[variant_name] = variant
             self.notify_add_variant_observers(variant)
             self.set_variant(variant.name)
             self.modified = True
@@ -373,10 +373,10 @@ class PyFxPedal(PyFxComponent):
     """Remove Variant"""
 
     def remove_variant(self, variant_name: str):
-        if variant_name in [variant.name for variant in self.variants]:
+        if variant_name in [variant.name for variant in self.variants.values()]:
             pyfx_log.debug(f"Remove {variant_name} {self.name} pedal variant")
-            variant = next(variant for variant in self.variants if variant.name == variant_name)
-            self.variants.remove(variant)
+            variant = next(variant for variant in self.variants.values() if variant.name == variant_name)
+            del self.variants[variant_name]
             if self.variant == variant:
                 self.variant = None
             self.modified = True
@@ -404,9 +404,9 @@ class PyFxPedal(PyFxComponent):
     """Change Variant Name"""
 
     def change_variant_name(self, old_name, new_name: str):
-        if old_name in [variant.name for variant in self.variants]:
+        if old_name in [variant.name for variant in self.variants.values()]:
             pyfx_log.debug(f"Change {old_name} {self.name} pedal variant to {new_name}")
-            for variant in self.variants:
+            for variant in self.variants.values():
                 if variant.name == old_name:
                     variant.name = new_name
             self.notify_change_variant_name_observers(old_name, new_name)
