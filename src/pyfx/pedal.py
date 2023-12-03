@@ -523,3 +523,9 @@ class PyFxPedalVariant(PyFxComponent):
         self.name = name
         self.knobs = knobs
         self.footswitches = footswitches
+
+    def process_audio(self, data):
+        """Process Audio data
+        This will be reimplemented by the classes that inherit from PyFxPedalVariant
+        """
+        return data

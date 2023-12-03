@@ -33,7 +33,7 @@ class AudioProcessor:
             self._total_frames = wf.getnframes()
             self._frame_rate = wf.getframerate()
 
-    def audio_data_processor(self, process_audio_fcn: callable):
+    def set_audio_data_processor(self, process_audio_fcn: callable):
         self._process_audio = process_audio_fcn
 
     def play(self):
@@ -60,7 +60,7 @@ class AudioProcessor:
         self._frame_index = 0
         self._paused = False
 
-    def loop(self, state: bool):
+    def loop(self, state: bool):  # noqa: FBT001
         self._looping = state
 
     def _play_audio(self):
@@ -73,8 +73,9 @@ class AudioProcessor:
                         return (None, pyaudio.paComplete)
                     raw_data = wf.readframes(frame_count)
                     self._frame_index = wf.tell()
-                    data = np.frombuffer(raw_data, np.int16)
+                    data = np.frombuffer(raw_data, np.int16).astype(np.float32)
                     data = self._process_audio(data)
+                    data = np.clip(data, np.iinfo(np.int16).min, np.iinfo(np.int16).max).astype(np.int16)
                     return (data.tobytes(), pyaudio.paContinue)
 
                 self._pa = pyaudio.PyAudio()

@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 from pyfx.audio_processor import AudioProcessor
 from pyfx.exceptions import PedalDoesNotExistError
 from pyfx.logging import pyfx_log
-from pyfx.pedal import PyFxPedal
+from pyfx.pedal import PyFxPedal, PyFxPedalVariant
 from pyfx.pedal_builder.pedal_builder import PedalBuilder
 from pyfx.ui.pedal_builder_main_window_ui import Ui_PedalBuilderMainWindow
 from pyfx.widgets.about_widget import AboutWidget
@@ -44,6 +44,8 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         """
         if self.pedal_builder.pedal:
             self.pedal: PyFxPedal = self.pedal_builder.pedal
+            self.update_audio_processor(self.pedal.variant)
+            self.pedal.add_set_variant_observer(self.update_audio_processor)
             self.pedal_widget = PedalWidget(pedal=self.pedal)
             self.pedal_layout.insertWidget(1, self.pedal_widget)
             self.update_display_actions()
@@ -114,6 +116,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.close_pedal()
         self.pedal_builder.create_new_pedal()
         self.pedal = self.pedal_builder.pedal
+        self.pedal.add_set_variant_observer(self.update_audio_processor)
         self.pedal_widget = PedalWidget(pedal=self.pedal)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
         self.adjust_and_center()
@@ -131,6 +134,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.close_pedal()
         self.pedal_builder.open_pedal(name)
         self.pedal = self.pedal_builder.pedal
+        self.pedal.add_set_variant_observer(self.update_audio_processor)
         self.pedal_widget = PedalWidget(pedal=self.pedal)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
         self.adjust_and_center()
@@ -161,6 +165,11 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             self.pedal_builder.save_pedal()
         except PedalDoesNotExistError:
             pass
+
+    def update_audio_processor(self, variant: PyFxPedalVariant):
+        """Update the audio processor to use the pedal variants process audio function"""
+        pyfx_log.debug(f"Set audio processor to use the {variant.name} {self.pedal.name} pedal variant")
+        self.audio_processor.set_audio_data_processor(variant.process_audio)
 
     """Pedal Menu Callbacks"""
 

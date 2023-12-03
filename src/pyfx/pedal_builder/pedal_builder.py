@@ -2,14 +2,10 @@ import importlib
 import re
 import shutil
 import sys
-from functools import partial
 from pathlib import Path
 from typing import Optional
 
-from pyfx.audio_processor import AudioProcessor
-from pyfx.exceptions import InvalidPedalConfigError, InvalidRootPedalFolderError, PedalDoesNotExistError
-from pyfx.footswitch import PyFxFootswitch
-from pyfx.knob import PyFxKnob
+from pyfx.exceptions import InvalidRootPedalFolderError, PedalDoesNotExistError
 from pyfx.logging import pyfx_log
 from pyfx.pedal import PyFxPedal, PyFxPedalVariant
 
@@ -131,7 +127,7 @@ def load_pedal_module(root_pedal_folder: Path, pedal_name: str) -> PyFxPedal:
 
 
 class PedalBuilder:
-    def __init__(self, root_pedal_folder: Path | str, audio_processor: AudioProcessor):
+    def __init__(self, root_pedal_folder: Path | str):
         if isinstance(root_pedal_folder, Path):
             pass
         elif isinstance(root_pedal_folder, str):
@@ -141,7 +137,6 @@ class PedalBuilder:
         root_pedal_folder.mkdir(parents=True, exist_ok=True)
 
         self.root_pedal_folder = root_pedal_folder
-        self.audio_processor = audio_processor
         try:
             with open(startup_config_file(self.root_pedal_folder)) as file:
                 pedal_name = file.read()
@@ -190,7 +185,6 @@ class PedalBuilder:
         self.pedal.add_change_knob_name_observer(self.change_knob_name)
         self.pedal.add_change_footswitch_name_observer(self.change_footswitch_name)
         self.pedal.reset_modified_flags()
-        self.update_audio_processor()
         self.update_startup_config_file()
 
     """Close Pedal"""
@@ -562,10 +556,3 @@ class PedalBuilder:
                 self.footswitch_name_changes[old_footswitch_name_in_dict] = new_footswitch_name
                 return
         self.footswitch_name_changes[old_footswitch_name] = new_footswitch_name
-
-    """Audio Processor Control"""
-
-    def update_audio_processor(self):
-        pass
-        # TODO: Add this back in
-        # self.audio_processor.audio_data_processor(partial(self.pedal.process_audio, self.pedal))

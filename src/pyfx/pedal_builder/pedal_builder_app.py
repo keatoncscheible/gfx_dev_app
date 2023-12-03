@@ -20,7 +20,7 @@ def load_stylesheet(filepath):
 def pedal_builder_app(pedal_folder: Path):
     pedal_folder.mkdir(exist_ok=True)
 
-    pyfx_log.info("Pedal Builder Opened: {}".format(datetime.now().strftime("%b-%d-%Y %H:%M:%S")))
+    pyfx_log.info("Pedal Builder Opened: {}".format(datetime.now().strftime("%b-%d-%Y %H:%M:%S")))  # noqa: DTZ005
 
     app = QApplication(sys.argv)
 
@@ -28,10 +28,7 @@ def pedal_builder_app(pedal_folder: Path):
     app.setStyleSheet(stylesheet)
 
     audio_processor = AudioProcessor()
-    pedal_builder = PedalBuilder(
-        root_pedal_folder=pedal_folder,
-        audio_processor=audio_processor,
-    )
+    pedal_builder = PedalBuilder(root_pedal_folder=pedal_folder)
     window = PedalBuilderMainWindow(
         pedal_builder=pedal_builder,
         audio_processor=audio_processor,
@@ -43,7 +40,7 @@ def pedal_builder_app(pedal_folder: Path):
 
     ret = app.exec()
 
-    pyfx_log.info("Pedal Builder Closed: {}\n".format(datetime.now().strftime("%b-%d-%Y %H:%M:%S")))
+    pyfx_log.info("Pedal Builder Closed: {}\n".format(datetime.now().strftime("%b-%d-%Y %H:%M:%S")))  # noqa: DTZ005
 
     sys.exit(ret)
 
@@ -55,6 +52,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     pedal_folder = Path(args.pedal_folder)
-    if pedal_folder.exists():
-        shutil.rmtree(pedal_folder)
+    # if pedal_folder.exists():
+    #     shutil.rmtree(pedal_folder)
     pedal_builder_app(pedal_folder)
