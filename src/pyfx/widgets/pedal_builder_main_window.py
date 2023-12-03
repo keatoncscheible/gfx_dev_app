@@ -1,7 +1,8 @@
-import importlib
+import os
 import sys
 from pathlib import Path
 
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 
@@ -14,6 +15,39 @@ from pyfx.ui.pedal_builder_main_window_ui import Ui_PedalBuilderMainWindow
 from pyfx.widgets.about_widget import AboutWidget
 from pyfx.widgets.open_pedal_dialog import OpenPedalDialog
 from pyfx.widgets.pedal_widget import PedalWidget
+
+
+class VariantReloadWatcher:
+    def __init__(self, reload_cb: callable):
+        update_rate = 1000
+        self.variant_file = None
+        self.last_modified = None
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.check_for_variant_file_update)
+        self.timer.start(update_rate)
+        self.reload_cb = reload_cb
+
+    def set_variant_file(self, variant_file):
+        variant_module_name = variant_file.__class__.__module__
+        if variant_module_name in sys.modules:
+            variant_module = sys.modules[variant_module_name]
+            self.variant_file = variant_module.__file__
+            pyfx_log.info(f"Watching {self.variant_file} for changes")
+
+    def check_for_variant_file_update(self):
+        if self.variant_file is not None:
+            current_modified = os.path.getmtime(self.variant_file)
+            if self.last_modified is None:
+                self.last_modified = current_modified
+            elif current_modified != self.last_modified:
+                self.last_modified = current_modified
+                self.on_variant_file_changed()
+        else:
+            self.last_modified = None
+
+    def on_variant_file_changed(self):
+        pyfx_log.debug(f"{self.variant_file} has been updated")
+        self.reload_cb()
 
 
 class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
@@ -36,6 +70,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.setWindowIcon(QIcon("src/pyfx/assets/pyfx_logo.png"))
         self.pedal_builder = pedal_builder
         self.audio_processor = audio_processor
+        self.variant_reload_watcher = VariantReloadWatcher(self.reload_pedal)
         self.initialize_pedal_widget()
         self.setup_transport_control()
         self.adjust_and_center()
@@ -47,7 +82,9 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         if self.pedal_builder.pedal:
             self.pedal: PyFxPedal = self.pedal_builder.pedal
             self.update_audio_processor(self.pedal.variant)
+            self.variant_reload_watcher.set_variant_file(self.pedal.variant)
             self.pedal.add_set_variant_observer(self.update_audio_processor)
+            self.pedal.add_set_variant_observer(self.variant_reload_watcher.set_variant_file)
             self.pedal_widget = PedalWidget(pedal=self.pedal)
             self.pedal_layout.insertWidget(1, self.pedal_widget)
             self.update_display_actions()
@@ -122,6 +159,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.pedal_builder.create_new_pedal()
         self.pedal = self.pedal_builder.pedal
         self.pedal.add_set_variant_observer(self.update_audio_processor)
+        self.pedal.add_set_variant_observer(self.variant_reload_watcher.set_variant_file)
         self.pedal_widget = PedalWidget(pedal=self.pedal)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
 
@@ -139,6 +177,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.pedal_builder.open_pedal(name)
         self.pedal: PyFxPedal = self.pedal_builder.pedal
         self.pedal.add_set_variant_observer(self.update_audio_processor)
+        self.pedal.add_set_variant_observer(self.variant_reload_watcher.set_variant_file)
         self.pedal_widget = PedalWidget(pedal=self.pedal)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
 
