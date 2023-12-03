@@ -27,7 +27,7 @@ class SaturatePedal(PyFxPedal):
                 sensitivity=1,
                 mode="logarithmic",
                 display_enabled=True,
-                value=50.11872336272722,
+                value=15.848931924611133,
             ),
             "Output": PyFxKnob(
                 name="Output",
@@ -38,7 +38,7 @@ class SaturatePedal(PyFxPedal):
                 sensitivity=1,
                 mode="logarithmic",
                 display_enabled=True,
-                value=0.5011872336272722,
+                value=1.0,
             ),
         }
         footswitches = {
@@ -64,7 +64,7 @@ class SaturatePedal(PyFxPedal):
                 footswitches=footswitches,
             ),
         }
-        variant = variants["Default"]
+        variant = variants["Smooth"]
         pedal_color = "#0000FF"
         text_color = "#FFFFFF"
         super().__init__(
