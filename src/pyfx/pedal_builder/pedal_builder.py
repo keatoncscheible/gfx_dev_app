@@ -164,6 +164,7 @@ class PedalBuilder:
         # Used to know when pedal parameters have changed between saves
         self.prev_pedal_name = None
         self.new_variants: list[PyFxPedalVariant] = []
+        self.variants_to_remove: set[str] = set()
         self.knob_name_changes: dict[str, str] = {}
         self.footswitch_name_changes: dict[str, str] = {}
         self.variant_name_changes: dict[str, str] = {}
@@ -232,16 +233,25 @@ class PedalBuilder:
                 pedal_variant_module_to_update = pedal_folder(
                     self.root_pedal_folder, self.pedal.name
                 ) / pedal_variant_module_filename(self.prev_pedal_name, variant.name)
-                pedal_variant_module_to_update.rename(
-                    pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, variant.name)
-                )
+                if pedal_variant_module_to_update.exists():
+                    pedal_variant_module_to_update.rename(
+                        pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, variant.name)
+                    )
+        # Remove variants that have been deleted
+        for variant_name in self.variants_to_remove:
+            variant_module = pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, variant_name)
+            if variant_module.exists():
+                variant_module.unlink()
 
+        # Add any new variants
         for variant in self.new_variants:
             self.generate_pedal_variant_module(self.pedal.name, variant.name)
 
+        # Update pedal variant files
         for variant in self.pedal.variants.values():
             self.update_pedal_variant(variant)
 
+        # Regenerate pedal module and pedal variant base module
         self.generate_pedal_module(self.pedal.name, [variant.name for variant in self.pedal.variants.values()])
         self.generate_pedal_variant_base_module(self.pedal.name)
 
@@ -250,6 +260,7 @@ class PedalBuilder:
         self.temporary = False
         self.prev_pedal_name = None
         self.new_variants = []
+        self.variants_to_remove = set()
         self.knob_name_changes = {}
         self.footswitch_name_changes = {}
         self.variant_name_changes = {}
@@ -335,7 +346,7 @@ class PedalBuilder:
                 file.write("        }\n")
             else:
                 file.write("        variants = {}\n")
-            if self.pedal:
+            if self.pedal is not None and self.pedal.variant is not None:
                 file.write(f'        variant = variants["{self.pedal.variant.name}"]\n')
             else:
                 file.write(f'        variant = variants["{variant_names[0]}"]\n')
@@ -505,6 +516,10 @@ class PedalBuilder:
 
     def remove_pedal_variant(self, variant: PyFxPedalVariant):
         pyfx_log.debug(f"Removing pedal variant {variant.name}")
+        self.variants_to_remove.add(variant.name)
+        for new_variant in self.new_variants.copy():
+            if variant.name == new_variant.name:
+                self.new_variants.remove(variant)
 
     def change_pedal_variant_name(self, old_variant_name: str, new_variant_name: str):
         pyfx_log.debug(f"Changing {old_variant_name} pedal variant to {new_variant_name}")
