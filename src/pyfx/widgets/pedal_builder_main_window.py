@@ -1,3 +1,5 @@
+import importlib
+import sys
 from pathlib import Path
 
 from PySide6.QtGui import QIcon
@@ -84,6 +86,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         pyfx_log.debug("File->New Pedal pressed")
         if self.prompt_for_save_if_needed():
             self.new_pedal()
+            self.adjust_and_center()
 
     def file__open_pedal_cb(self):
         pyfx_log.debug("File->Open Pedal pressed")
@@ -91,12 +94,14 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             open_pedal_dialog = OpenPedalDialog(pedal_folder=self.pedal_builder.root_pedal_folder)
             open_pedal_dialog.open_pedal.connect(self.open_pedal)
             open_pedal_dialog.exec_()
+            self.adjust_and_center()
 
     def file__close_pedal_cb(self):
         pyfx_log.debug("File->Close Pedal pressed")
         if self.prompt_for_save_if_needed():
             self.pedal_builder.remove_previous_pedal_file()
             self.close_pedal()
+            self.adjust_and_center()
 
     def file__save_pedal_cb(self):
         pyfx_log.debug("File->Save Pedal pressed")
@@ -119,7 +124,6 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.pedal.add_set_variant_observer(self.update_audio_processor)
         self.pedal_widget = PedalWidget(pedal=self.pedal)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
-        self.adjust_and_center()
 
     def open_pedal(self, name: str):
         """
@@ -133,11 +137,10 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         pyfx_log.debug(f"Opening {name} pedal")
         self.close_pedal()
         self.pedal_builder.open_pedal(name)
-        self.pedal = self.pedal_builder.pedal
+        self.pedal: PyFxPedal = self.pedal_builder.pedal
         self.pedal.add_set_variant_observer(self.update_audio_processor)
         self.pedal_widget = PedalWidget(pedal=self.pedal)
         self.pedal_layout.insertWidget(1, self.pedal_widget)
-        self.adjust_and_center()
 
     def close_pedal(self):
         """
@@ -152,7 +155,6 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             self.pedal_widget.hide()
             self.pedal_widget.deleteLater()
             self.pedal_widget = None
-            self.adjust_and_center()
 
     def save_pedal(self):
         """
@@ -171,6 +173,11 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         pyfx_log.debug(f"Set audio processor to use the {variant.name} {self.pedal.name} pedal variant")
         self.audio_processor.set_audio_data_processor(variant.process_audio)
 
+    def reload_pedal(self):
+        if self.prompt_for_save_if_needed():
+            self.open_pedal(self.pedal.name)
+            self.update_audio_processor(self.pedal.variant)
+
     """Pedal Menu Callbacks"""
 
     def pedal__add_knob_cb(self):
@@ -180,6 +187,10 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
     def pedal__add_footswitch_cb(self):
         pyfx_log.debug("Pedal->Add Footswitch pressed")
         self.pedal.add_footswitch()
+
+    def pedal__reload_cb(self):
+        pyfx_log.debug("Pedal->Reload pressed")
+        self.reload_pedal()
 
     """View Menu Callbacks"""
 

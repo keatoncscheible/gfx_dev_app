@@ -34,7 +34,10 @@ class AudioProcessor:
             self._frame_rate = wf.getframerate()
 
     def set_audio_data_processor(self, process_audio_fcn: callable):
-        self._process_audio = process_audio_fcn
+        if process_audio_fcn is not None:
+            self._process_audio = process_audio_fcn
+        else:
+            self._process_audio = process_audio_default
 
     def play(self):
         self._stop_playback.clear()
@@ -75,9 +78,10 @@ class AudioProcessor:
                     self._frame_index = wf.tell()
                     data = np.frombuffer(raw_data, np.int16).astype(np.float32) * (1 / np.iinfo(np.int16).max)
                     data = self._process_audio(data)
-                    data = np.clip(
-                        data * np.iinfo(np.int16).max, np.iinfo(np.int16).min, np.iinfo(np.int16).max
-                    ).astype(np.int16)
+                    data = data * np.iinfo(np.int16).max
+                    data = np.clip(data, np.iinfo(np.int16).min, np.iinfo(np.int16).max)
+                    data = data.astype(np.int16)
+
                     return (data.tobytes(), pyaudio.paContinue)
 
                 self._pa = pyaudio.PyAudio()

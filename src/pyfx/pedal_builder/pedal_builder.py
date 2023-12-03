@@ -112,8 +112,33 @@ def pedal_variant_class_name(pedal_name: str, variant_name: str):
 
 
 def load_pedal_module(root_pedal_folder: Path, pedal_name: str) -> PyFxPedal:
+    def find_python_modules(root_dir):
+        """Finds all Python files in the given directory"""
+        root_path = Path(root_dir)
+        return root_path.glob("*.py")
+
+    def file_path_to_module_name(file_path, root_dir):
+        """Converts a file path to a dotted module name."""
+        relative_path = file_path.relative_to(root_dir)
+        module_name = str(relative_path.with_suffix("")).replace("/", ".")
+        return module_name
+
+    def reload_modules(root_dir):
+        python_files = find_python_modules(root_dir)
+
+        for file_path in python_files:
+            module_name = file_path_to_module_name(file_path, root_dir)
+            if module_name in sys.modules:
+                module = sys.modules[module_name]
+                pyfx_log.info(f"Reloding module: {module_name}")
+                importlib.reload(module)
+            else:
+                pyfx_log.info(f"Module {module_name} not loaded, skipping.")
+
     pedal_folder_path = pedal_folder(root_pedal_folder, pedal_name).resolve().as_posix()
     sys.path.append(pedal_folder_path)
+    reload_modules(pedal_folder_path)
+
     # Dynamically import pedal class from generated pedal module and return an instance of the class
     spec = importlib.util.spec_from_file_location(
         f"{root_pedal_folder}.{pedal_folder_name(pedal_name)}.{pedal_module_name(pedal_name)}",
