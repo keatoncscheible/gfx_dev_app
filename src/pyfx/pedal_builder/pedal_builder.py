@@ -237,6 +237,13 @@ class PedalBuilder:
                     pedal_variant_module_to_update.rename(
                         pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, variant.name)
                     )
+
+        # Rename any variant modules whose name has changed
+        for old_variant_name, new_variant_name in self.variant_name_changes.items():
+            pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, old_variant_name).rename(
+                pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, new_variant_name)
+            )
+
         # Remove variants that have been deleted
         for variant_name in self.variants_to_remove:
             variant_module = pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, variant_name)
@@ -335,8 +342,9 @@ class PedalBuilder:
                 file.write("        }\n")
             else:
                 file.write("        footswitches = {}\n")
-            file.write("        variants = {\n")
+
             if variant_names:
+                file.write("        variants = {\n")
                 for variant_name in variant_names:
                     file.write(f'            "{variant_name}": {pedal_variant_class_name(pedal_name, variant_name)}(\n')
                     file.write(f'                name="{variant_name}",\n')
@@ -348,8 +356,10 @@ class PedalBuilder:
                 file.write("        variants = {}\n")
             if self.pedal is not None and self.pedal.variant is not None:
                 file.write(f'        variant = variants["{self.pedal.variant.name}"]\n')
-            else:
+            elif len(variant_names) > 0:
                 file.write(f'        variant = variants["{variant_names[0]}"]\n')
+            else:
+                file.write("        variant = None\n")
             file.write('        pedal_color = "#0000FF"\n')
             file.write('        text_color = "#FFFFFF"\n')
             file.write("        super().__init__(\n")
@@ -492,6 +502,12 @@ class PedalBuilder:
             pedal_variant_file_contents = pedal_variant_file_contents.replace(
                 f"self.{property_name(old_footswitch_name)}_modes",
                 f"self.{property_name(new_footswitch_name)}_modes",
+            )
+
+        for old_variant_name, new_variant_name in self.variant_name_changes.items():
+            pedal_variant_file_contents = pedal_variant_file_contents.replace(
+                pedal_variant_class_name(self.pedal.name, old_variant_name),
+                pedal_variant_class_name(self.pedal.name, new_variant_name),
             )
 
         with open(pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, variant.name), "w") as file:

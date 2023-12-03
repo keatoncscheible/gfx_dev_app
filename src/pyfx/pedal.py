@@ -404,11 +404,11 @@ class PyFxPedal(PyFxComponent):
     """Change Variant Name"""
 
     def change_variant_name(self, old_name, new_name: str):
-        if old_name in [variant.name for variant in self.variants.values()]:
+        if old_name in self.variants.keys():
             pyfx_log.debug(f"Change {old_name} {self.name} pedal variant to {new_name}")
-            for variant in self.variants.values():
-                if variant.name == old_name:
-                    variant.name = new_name
+            self.variants[new_name] = self.variants[old_name]
+            self.variants[new_name].name = new_name
+            del self.variants[old_name]
             self.notify_change_variant_name_observers(old_name, new_name)
 
     def add_change_variant_name_observer(self, observer):
