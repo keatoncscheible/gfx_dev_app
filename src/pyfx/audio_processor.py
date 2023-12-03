@@ -73,9 +73,11 @@ class AudioProcessor:
                         return (None, pyaudio.paComplete)
                     raw_data = wf.readframes(frame_count)
                     self._frame_index = wf.tell()
-                    data = np.frombuffer(raw_data, np.int16).astype(np.float32)
+                    data = np.frombuffer(raw_data, np.int16).astype(np.float32) * (1 / np.iinfo(np.int16).max)
                     data = self._process_audio(data)
-                    data = np.clip(data, np.iinfo(np.int16).min, np.iinfo(np.int16).max).astype(np.int16)
+                    data = np.clip(
+                        data * np.iinfo(np.int16).max, np.iinfo(np.int16).min, np.iinfo(np.int16).max
+                    ).astype(np.int16)
                     return (data.tobytes(), pyaudio.paContinue)
 
                 self._pa = pyaudio.PyAudio()
