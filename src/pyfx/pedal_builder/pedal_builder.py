@@ -62,8 +62,8 @@ def pedal_folder(root_pedal_folder: Path, pedal_name: str):
     return root_pedal_folder / pedal_folder_name(pedal_name)
 
 
-def pedal_settings_file(root_pedal_folder: Path, pedal_name: str):
-    return pedal_folder(root_pedal_folder, pedal_name) / "pedal_settings.pkl"
+def pedal_autogen_folder(root_pedal_folder: Path, pedal_name: str):
+    return root_pedal_folder / pedal_folder_name(pedal_name) / "autogen"
 
 
 def pedal_module_name(pedal_name: str):
@@ -75,19 +75,7 @@ def pedal_module_filename(pedal_name: str):
 
 
 def pedal_module_file(root_pedal_folder: Path, pedal_name: str):
-    return pedal_folder(root_pedal_folder, pedal_name) / pedal_module_filename(pedal_name)
-
-
-def pedal_base_module_name(pedal_name: str):
-    return f"{pedal_module_name(pedal_name)}_base"
-
-
-def pedal_base_module_filename(pedal_name: str):
-    return f"{pedal_base_module_name(pedal_name)}.py"
-
-
-def pedal_base_module_file(root_pedal_folder: Path, pedal_name: str):
-    return pedal_folder(root_pedal_folder, pedal_name) / pedal_base_module_filename(pedal_name)
+    return pedal_autogen_folder(root_pedal_folder, pedal_name) / pedal_module_filename(pedal_name)
 
 
 def pedal_variant_base_module_name(pedal_name: str):
@@ -99,7 +87,7 @@ def pedal_variant_base_module_filename(pedal_name: str):
 
 
 def pedal_variant_base_module_file(root_pedal_folder: Path, pedal_name: str):
-    return pedal_folder(root_pedal_folder, pedal_name) / pedal_variant_base_module_filename(pedal_name)
+    return pedal_autogen_folder(root_pedal_folder, pedal_name) / pedal_variant_base_module_filename(pedal_name)
 
 
 def pedal_variant_base_class_name(pedal_name: str):
@@ -175,6 +163,7 @@ class PedalBuilder:
         if pedal_name is None:
             pedal_name = generate_pedal_name(self.root_pedal_folder)
         pedal_folder(self.root_pedal_folder, pedal_name).mkdir()
+        pedal_autogen_folder(self.root_pedal_folder, pedal_name).mkdir()
         default_variant_name = "Default"
         self.generate_pedal_module(pedal_name, [default_variant_name])
         self.generate_pedal_variant_base_module(pedal_name)
@@ -374,7 +363,7 @@ class PedalBuilder:
         with open(pedal_variant_module_file(self.root_pedal_folder, pedal_name, variant_name), "w") as file:
             file.write("import numpy as np\n")
             file.write(
-                f"from {pedal_variant_base_module_name(pedal_name)} import {pedal_variant_base_class_name(pedal_name)}\n"  # noqa: E501
+                f"from autogen.{pedal_variant_base_module_name(pedal_name)} import {pedal_variant_base_class_name(pedal_name)}\n"  # noqa: E501
             )
             file.write("\n")
             file.write("\n")
@@ -384,10 +373,9 @@ class PedalBuilder:
             file.write("    def process_audio(self, data: np.ndarray):\n")
             file.write(f'        """{variant_name} {pedal_name} Pedal Processing"""\n')
             file.write("\n")
-            file.write("        # TODO: Replace this line with your processing code\n")
-            file.write("        processed_data = data\n")
+            file.write("        # TODO: Add data processing code here\n")
             file.write("\n")
-            file.write("        return processed_data\n")
+            file.write("        return data\n")
 
     def generate_pedal_variant_base_module(self, pedal_name: str):
         with open(pedal_variant_base_module_file(self.root_pedal_folder, pedal_name), "w") as file:
@@ -512,6 +500,11 @@ class PedalBuilder:
             pedal_variant_file_contents = pedal_variant_file_contents.replace(
                 pedal_variant_class_name(self.pedal.name, old_variant_name),
                 pedal_variant_class_name(self.pedal.name, new_variant_name),
+            )
+
+            pedal_variant_file_contents = pedal_variant_file_contents.replace(
+                f'"""{old_variant_name} {self.pedal.name} Pedal Processing"""',
+                f'"""{new_variant_name} {self.pedal.name} Pedal Processing"""',
             )
 
         with open(pedal_variant_module_file(self.root_pedal_folder, self.pedal.name, variant.name), "w") as file:
