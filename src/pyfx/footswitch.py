@@ -116,6 +116,8 @@ class PyFxFootswitch(PyFxComponent):
                 self.mode_idx = 0
             except IndexError:
                 self.mode = None
+            except TypeError:
+                self.mode = None
             self.modified = True
 
     def set_mode(self, mode: str):

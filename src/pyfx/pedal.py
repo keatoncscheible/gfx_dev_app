@@ -128,6 +128,7 @@ class PyFxPedal(PyFxComponent):
             raise KnobAlreadyExistsError()
         pyfx_log.debug(f"Add {knob.name} knob to {self.name} pedal")
         knob.add_remove_knob_observer(self.remove_knob)
+        knob.add_change_knob_name_observer(self.change_knob_name)
         self.knobs[knob.name] = knob
         self.modified = True
         self.notify_add_knob_observers(knob)
@@ -224,6 +225,7 @@ class PyFxPedal(PyFxComponent):
             raise FootswitchAlreadyExistsError()
         pyfx_log.debug(f"Add {footswitch.name} footswitch to {self.name} pedal")
         footswitch.add_remove_footswitch_observer(self.remove_footswitch)
+        footswitch.add_change_footswitch_name_observer(self.change_footswitch_name)
         self.footswitches[footswitch.name] = footswitch
         self.modified = True
         self.notify_add_footswitch_observers(footswitch)
@@ -281,7 +283,7 @@ class PyFxPedal(PyFxComponent):
 
     def change_footswitch_name(self, old_name: str, new_name: str):
         self.footswitches[new_name] = self.footswitches[old_name]
-        self.footswitches[new_name].change_footswitch_name(old_name, new_name)
+        self.footswitches[new_name].change_footswitch_name(new_name)
         del self.footswitches[old_name]
         self.modified = True
         self.notify_change_footswitch_name_observers(old_name, new_name)

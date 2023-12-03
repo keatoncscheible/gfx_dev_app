@@ -33,7 +33,7 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         self.pedal = pedal
 
         # Connecting pedal changes to UI updates
-        self.pedal.add_change_pedal_name_observer(self.set_pedal_name)
+        self.pedal.add_change_pedal_name_observer(self.change_pedal_name)
         self.pedal.add_add_knob_observer(self.add_knob)
         self.pedal.add_remove_knob_observer(self.remove_knob)
         self.pedal.add_add_footswitch_observer(self.add_footswitch)
@@ -148,6 +148,15 @@ class PedalWidget(QFrame, Ui_PedalWidget):
         """
         pyfx_log.debug(f"Pedal name changed from {self.pedal.name} to {name}")
         self.pedal_name_label.setText(name)
+
+    def change_pedal_name(self, old_name: str, new_name: str):
+        """
+        Change the name of the pedal.
+        :param old_name: The old name of the pedal.
+        :param old_name: The new name of the pedal.
+        """
+        pyfx_log.debug(f"Pedal name changed from {old_name} to {new_name}")
+        self.pedal_name_label.setText(new_name)
 
     def set_pedal_color(self, color: str):
         """
