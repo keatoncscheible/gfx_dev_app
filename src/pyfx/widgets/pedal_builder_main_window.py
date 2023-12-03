@@ -158,6 +158,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.close_pedal()
         self.pedal_builder.create_new_pedal()
         self.pedal = self.pedal_builder.pedal
+        self.update_audio_processor(self.pedal.variant)
         self.pedal.add_set_variant_observer(self.update_audio_processor)
         self.pedal.add_set_variant_observer(self.variant_reload_watcher.set_variant_file)
         self.pedal_widget = PedalWidget(pedal=self.pedal)
@@ -176,6 +177,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         self.close_pedal()
         self.pedal_builder.open_pedal(name)
         self.pedal: PyFxPedal = self.pedal_builder.pedal
+        self.update_audio_processor(self.pedal.variant)
         self.pedal.add_set_variant_observer(self.update_audio_processor)
         self.pedal.add_set_variant_observer(self.variant_reload_watcher.set_variant_file)
         self.pedal_widget = PedalWidget(pedal=self.pedal)
