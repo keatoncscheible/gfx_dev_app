@@ -33,7 +33,8 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
 
         # Connect UI signals to methods
         self.button_box.clicked.connect(self.button_box_clicked)
-        self.mode_combobox.currentTextChanged.connect(self.change_mode_settings)
+        self.mode_combobox.currentTextChanged.connect(self.update_mode_settings)
+        self.update_mode_settings(knob.mode)
 
     def button_box_clicked(self, button: QAbstractButton):
         """
@@ -76,7 +77,7 @@ class KnobConfigDialog(QDialog, Ui_KnobConfigDialog):
 
         super().accept()
 
-    def change_mode_settings(self, mode: str):
+    def update_mode_settings(self, mode: str):
         """
         Updates the dialog UI based on the selected knob mode.
 
