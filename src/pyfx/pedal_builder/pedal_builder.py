@@ -389,6 +389,9 @@ class PedalBuilder:
             file.write(
                 f"class {pedal_variant_class_name(pedal_name, variant_name)}({pedal_variant_base_class_name(pedal_name)}):\n"  # noqa: E501
             )
+            file.write("    def __init__(self, *args, **kwargs):\n")
+            file.write("        super().__init__(*args, **kwargs)\n")
+            file.write("\n")
             file.write("    def process_audio(self, data: np.ndarray):\n")
             file.write(f'        """{variant_name} {pedal_name} Pedal Processing"""\n')
             file.write("\n")

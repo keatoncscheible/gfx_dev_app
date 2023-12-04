@@ -15,7 +15,7 @@ class SmoothSaturatePedal(SaturatePedalVariantBase):
         self.norm_holdoff_frames = 10
 
         hpf_order = 2
-        hpf_cuttoff_freq = 500
+        hpf_cuttoff_freq = 300
         self.hpf_sos = butter(
             hpf_order,
             hpf_cuttoff_freq,
@@ -40,7 +40,7 @@ class SmoothSaturatePedal(SaturatePedalVariantBase):
         self.bsf_zi = sosfilt_zi(self.bsf_sos)
 
         lpf_order = 4
-        lpf_cuttoff_freq = 5000
+        lpf_cuttoff_freq = 8000
         self.lpf_sos = butter(
             lpf_order,
             lpf_cuttoff_freq,
@@ -56,13 +56,15 @@ class SmoothSaturatePedal(SaturatePedalVariantBase):
         if len(self.norm_rms_deque) > self.norm_holdoff_frames:
             scale = np.mean(self.norm_rms_deque)
             scale = max(scale, 0.1)
-            data = data / scale
+            data = 2 * data / scale
+
         """Smooth Saturate Pedal Processing"""
         if self.on_off:
             data = np.clip(self.amount * data, -1, 1)
-            data = self.output * data
             data, self.hpf_zi = sosfilt(self.hpf_sos, data, zi=self.hpf_zi)
             data, self.bsf_zi = sosfilt(self.bsf_sos, data, zi=self.bsf_zi)
             data, self.lpf_zi = sosfilt(self.lpf_sos, data, zi=self.lpf_zi)
+
+        data = self.output * data
 
         return data

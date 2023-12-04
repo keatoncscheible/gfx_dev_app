@@ -41,6 +41,9 @@ class VariantReloadWatcher:
                 self.last_modified = current_modified
             elif current_modified != self.last_modified:
                 self.last_modified = current_modified
+                pyfx_log.debug(
+                    f"Variant file update: current_modified: {current_modified}  last_modified: {self.last_modified}"
+                )
                 self.on_variant_file_changed()
         else:
             self.last_modified = None

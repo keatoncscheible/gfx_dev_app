@@ -21,12 +21,12 @@ class DelayPedal(PyFxPedal):
                 name="Feedback",
                 minimum_value=0,
                 maximum_value=1,
-                default_value=0.5,
+                default_value=0.3,
                 precision=0.01,
                 sensitivity=1,
                 mode="linear",
-                display_enabled=False,
-                value=0.37,
+                display_enabled=True,
+                value=0.3,
             ),
             "Time": PyFxKnob(
                 name="Time",
@@ -36,8 +36,8 @@ class DelayPedal(PyFxPedal):
                 precision=0.01,
                 sensitivity=1,
                 mode="linear",
-                display_enabled=False,
-                value=0.26,
+                display_enabled=True,
+                value=0.5,
             ),
             "Dry/Wet": PyFxKnob(
                 name="Dry/Wet",
@@ -47,8 +47,8 @@ class DelayPedal(PyFxPedal):
                 precision=0.01,
                 sensitivity=1,
                 mode="linear",
-                display_enabled=False,
-                value=0.47000000000000003,
+                display_enabled=True,
+                value=0.5,
             ),
             "Output": PyFxKnob(
                 name="Output",
@@ -58,8 +58,8 @@ class DelayPedal(PyFxPedal):
                 precision=1.0,
                 sensitivity=1,
                 mode="logarithmic",
-                display_enabled=False,
-                value=7.943282347242816,
+                display_enabled=True,
+                value=3.1622776601683795,
             ),
         }
         footswitches = {
@@ -67,10 +67,10 @@ class DelayPedal(PyFxPedal):
                 name="On/Off",
                 footswitch_type="latching",
                 default_state=True,
-                state=True,
+                state=False,
                 mode=None,
                 modes=None,
-                display_enabled=False,
+                display_enabled=True,
             ),
         }
         variants = {
