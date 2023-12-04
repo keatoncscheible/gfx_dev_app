@@ -1,0 +1,32 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+    {
+        "key": "ctrl+shift+o",
+        "command": "qtForPython.editUi"
+    },
+    {
+        "key": "ctrl+alt+k",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Open Pedal Builder App"
+    },
+    {
+        "key": "ctrl+shift+alt+k",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Build and Open Pedal Builder App"
+    },
+    { // Debug Pedal Builder App
+        "key": "ctrl+win+alt+k",
+        "command": "workbench.action.debug.start",
+        "when": "editorTextFocus && !inDebugRepl && !config.userBindings"
+    },
+    {
+        "key": "shift+alt+k",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Compile Pedal Builder App Ui Files"
+    },
+    {
+        "key": "Ctrl+Alt+T",
+        "command": "workbench.action.tasks.terminate",
+        "when": "editorTextFocus"
+    }
+]
