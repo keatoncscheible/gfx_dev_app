@@ -26,7 +26,8 @@ class Ui_AudioPreferencesWidget(object):
     def setupUi(self, AudioPreferencesWidget):
         if not AudioPreferencesWidget.objectName():
             AudioPreferencesWidget.setObjectName(u"AudioPreferencesWidget")
-        AudioPreferencesWidget.resize(346, 590)
+        AudioPreferencesWidget.resize(500, 624)
+        AudioPreferencesWidget.setMinimumSize(QSize(500, 0))
         self.main_layout = QVBoxLayout(AudioPreferencesWidget)
         self.main_layout.setSpacing(8)
         self.main_layout.setObjectName(u"main_layout")
@@ -105,6 +106,37 @@ class Ui_AudioPreferencesWidget(object):
 
 
         self.audio_device_groupbox_layout.setLayout(3, QFormLayout.FieldRole, self.channel_configuration_button_layout)
+
+        self.audio_folder_label = QLabel(self.audio_device_groupbox)
+        self.audio_folder_label.setObjectName(u"audio_folder_label")
+        sizePolicy.setHeightForWidth(self.audio_folder_label.sizePolicy().hasHeightForWidth())
+        self.audio_folder_label.setSizePolicy(sizePolicy)
+        self.audio_folder_label.setMinimumSize(QSize(130, 0))
+        self.audio_folder_label.setMaximumSize(QSize(130, 16777215))
+
+        self.audio_device_groupbox_layout.setWidget(4, QFormLayout.LabelRole, self.audio_folder_label)
+
+        self.audio_folder_layout = QHBoxLayout()
+        self.audio_folder_layout.setSpacing(10)
+        self.audio_folder_layout.setObjectName(u"audio_folder_layout")
+        self.audio_folder_editbox = QLineEdit(self.audio_device_groupbox)
+        self.audio_folder_editbox.setObjectName(u"audio_folder_editbox")
+
+        self.audio_folder_layout.addWidget(self.audio_folder_editbox)
+
+        self.audio_folder_browse_button = QPushButton(self.audio_device_groupbox)
+        self.audio_folder_browse_button.setObjectName(u"audio_folder_browse_button")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.audio_folder_browse_button.sizePolicy().hasHeightForWidth())
+        self.audio_folder_browse_button.setSizePolicy(sizePolicy1)
+        self.audio_folder_browse_button.setMaximumSize(QSize(60, 16777215))
+
+        self.audio_folder_layout.addWidget(self.audio_folder_browse_button)
+
+
+        self.audio_device_groupbox_layout.setLayout(4, QFormLayout.FieldRole, self.audio_folder_layout)
 
 
         self.main_layout.addWidget(self.audio_device_groupbox)
@@ -295,9 +327,6 @@ class Ui_AudioPreferencesWidget(object):
         self.simulated_cpu_usage_editbox = QLineEdit(self.test_groupbox)
         self.simulated_cpu_usage_editbox.setObjectName(u"simulated_cpu_usage_editbox")
         self.simulated_cpu_usage_editbox.setEnabled(False)
-        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.simulated_cpu_usage_editbox.sizePolicy().hasHeightForWidth())
         self.simulated_cpu_usage_editbox.setSizePolicy(sizePolicy1)
         self.simulated_cpu_usage_editbox.setMaximumSize(QSize(35, 16777215))
@@ -327,6 +356,8 @@ class Ui_AudioPreferencesWidget(object):
         self.input_buffer_size_spinbox.valueChanged.connect(AudioPreferencesWidget.input_buffer_size_changed)
         self.output_buffer_size_spinbox.valueChanged.connect(AudioPreferencesWidget.output_buffer_size_changed)
         self.simulated_cpu_usage_slider.valueChanged.connect(AudioPreferencesWidget.simulated_cpu_usage_changed)
+        self.audio_folder_browse_button.pressed.connect(AudioPreferencesWidget.audio_folder_browse_button_pressed)
+        self.audio_folder_editbox.editingFinished.connect(AudioPreferencesWidget.audio_folder_editing_finished)
 
         self.sample_rate_combobox.setCurrentIndex(-1)
 
@@ -343,6 +374,8 @@ class Ui_AudioPreferencesWidget(object):
         self.channel_configuration_label.setText(QCoreApplication.translate("AudioPreferencesWidget", u"Channel Configuration", None))
         self.input_config_button.setText(QCoreApplication.translate("AudioPreferencesWidget", u"Input Config", None))
         self.output_config_button.setText(QCoreApplication.translate("AudioPreferencesWidget", u"Output Config", None))
+        self.audio_folder_label.setText(QCoreApplication.translate("AudioPreferencesWidget", u"Audio Folder", None))
+        self.audio_folder_browse_button.setText(QCoreApplication.translate("AudioPreferencesWidget", u"Browse", None))
         self.sample_rate_groupbox.setTitle(QCoreApplication.translate("AudioPreferencesWidget", u"Sample Rate", None))
         self.sample_rate_label.setText(QCoreApplication.translate("AudioPreferencesWidget", u"Sample Rate", None))
         self.latency_group_box.setTitle(QCoreApplication.translate("AudioPreferencesWidget", u"Latency", None))

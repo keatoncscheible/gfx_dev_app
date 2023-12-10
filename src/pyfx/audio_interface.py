@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import pyaudio
@@ -48,6 +49,7 @@ class AudioInterface:
         self.input_devices = self._get_input_devices()
         self.output_devices = self._get_output_devices()
         self.driver_types = self._get_driver_types()
+        self.audio_folder = Path("src/pyfx/assets/audio").resolve().as_posix()
         self.sample_rate = 44100
         self.sample_rates = [8000, 16000, 32000, 44100, 48000, 96000]
         self.input_buffer_size = 0
@@ -158,6 +160,14 @@ class AudioInterface:
     def set_audio_output(self, audio_output_id: int):
         pyfx_log.debug(f"Setting audio output to {self.devices[audio_output_id].name}")
         self.audio_output_id = audio_output_id
+
+    def set_audio_folder(self, audio_folder: str):
+        pyfx_log.debug(f"Setting audio folder to {audio_folder}")
+        self.audio_folder = audio_folder
+
+    @property
+    def audio_files(self):
+        return Path(self.audio_folder).glob("*.wav")
 
     def set_sample_rate(self, sample_rate: int):
         pyfx_log.debug(f"Setting sample rate to {sample_rate} Hz")

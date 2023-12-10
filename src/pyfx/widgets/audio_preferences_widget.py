@@ -1,5 +1,6 @@
-from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QWidget
+from pathlib import Path
+
+from PySide6.QtWidgets import QFileDialog, QWidget
 
 from pyfx.audio_interface import AudioInterface
 from pyfx.logging import pyfx_log
@@ -25,11 +26,14 @@ class AudioPreferencesWidget(QWidget, Ui_AudioPreferencesWidget):
         for host_api_id, driver_type in self.audio_interface.driver_types.items():
             self.driver_type_combobox.addItem(driver_type, host_api_id)
 
+        self.audio_input_device_combobox.addItem("Audio File", -1)
         for audio_input_id, audio_device in self.audio_interface.input_devices.items():
             self.audio_input_device_combobox.addItem(audio_device.name, audio_input_id)
 
         for audio_output_id, audio_device in self.audio_interface.output_devices.items():
             self.audio_output_device_combobox.addItem(audio_device.name, audio_output_id)
+
+        self.audio_folder_editbox.setText(self.audio_interface.audio_folder)
 
         default_sample_rate = self.audio_interface.sample_rate
         for sample_rate in self.audio_interface.sample_rates:
@@ -58,6 +62,21 @@ class AudioPreferencesWidget(QWidget, Ui_AudioPreferencesWidget):
         pyfx_log.debug(f"Audio output device changed to {audio_output_device}")
         audio_output_device_data = self.audio_output_device_combobox.currentData()
         self.audio_interface.set_audio_output(audio_output_device_data)
+
+    def audio_folder_browse_button_pressed(self):
+        initial_folder = self.audio_folder_editbox.text()
+        folder_path = QFileDialog.getExistingDirectory(self, "Select Audio Folder", initial_folder)
+        if folder_path:
+            self.audio_folder_editbox.setText(folder_path)
+
+    def audio_folder_editing_finished(self):
+        audio_folder = Path(self.audio_folder_editbox.text())
+        if audio_folder.exists() and audio_folder.is_dir():
+            pyfx_log.debug(f"Updating audio folder to {audio_folder.as_posix()}")
+            self.audio_folder_editbox.setStyleSheet("QLineEdit { background-color: #FFFFFF; }")
+        else:
+            pyfx_log.debug(f"{audio_folder.as_posix()} is not a valid folder")
+            self.audio_folder_editbox.setStyleSheet("QLineEdit { background-color: #FF8888; }")
 
     def sample_rate_changed(self, sample_rate: int):
         pyfx_log.debug(f"Sample rate changed to {sample_rate}")
@@ -100,4 +119,5 @@ class AudioPreferencesWidget(QWidget, Ui_AudioPreferencesWidget):
     def simulated_cpu_usage_changed(self, simulated_cpu_usage: int):
         pyfx_log.debug(f"Simulated CPU usage changed to {simulated_cpu_usage}")
         self.audio_interface.set_simulated_cpu_usage(simulated_cpu_usage)
+        self.simulated_cpu_usage_editbox.setText(f"{simulated_cpu_usage} %")
         self.simulated_cpu_usage_editbox.setText(f"{simulated_cpu_usage} %")

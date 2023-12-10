@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>346</width>
-    <height>590</height>
+    <width>500</width>
+    <height>624</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Audio Preferences</string>
@@ -157,6 +163,60 @@
          <widget class="QPushButton" name="output_config_button">
           <property name="text">
            <string>Output Config</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="audio_folder_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>130</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Audio Folder</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <layout class="QHBoxLayout" name="audio_folder_layout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QLineEdit" name="audio_folder_editbox"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="audio_folder_browse_button">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Browse</string>
           </property>
          </widget>
         </item>
@@ -773,6 +833,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>audio_folder_browse_button</sender>
+   <signal>pressed()</signal>
+   <receiver>AudioPreferencesWidget</receiver>
+   <slot>audio_folder_browse_button_pressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>371</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>311</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>audio_folder_editbox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>AudioPreferencesWidget</receiver>
+   <slot>audio_folder_editing_finished()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>243</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>311</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>driver_type_changed(QString)</slot>
@@ -785,5 +877,7 @@
   <slot>input_buffer_size_changed(int)</slot>
   <slot>output_buffer_size_changed(int)</slot>
   <slot>simulated_cpu_usage_changed(int)</slot>
+  <slot>audio_folder_browse_button_pressed()</slot>
+  <slot>audio_folder_editing_finished()</slot>
  </slots>
 </ui>
