@@ -135,6 +135,7 @@
     <addaction name="action_save_pedal"/>
     <addaction name="action_quit"/>
     <addaction name="separator"/>
+    <addaction name="action_preferences"/>
    </widget>
    <widget class="QMenu" name="menu_pedal">
     <property name="title">
@@ -250,6 +251,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="action_preferences">
+   <property name="text">
+    <string>Preferences</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+,</string>
    </property>
   </action>
  </widget>
@@ -439,6 +448,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_preferences</sender>
+   <signal>triggered()</signal>
+   <receiver>PedalBuilderMainWindow</receiver>
+   <slot>file__preferences_cb()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>help__about_cb()</slot>
@@ -452,5 +477,6 @@
   <slot>view__knob_displays_cb(bool)</slot>
   <slot>view__footswitch_displays_cb(bool)</slot>
   <slot>pedal__reload_cb()</slot>
+  <slot>file__preferences_cb()</slot>
  </slots>
 </ui>

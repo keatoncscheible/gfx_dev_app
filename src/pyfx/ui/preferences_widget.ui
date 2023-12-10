@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PreferencesWidget</class>
+ <widget class="QWidget" name="PreferencesWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Preferences</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="preferences_tab_widget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="AudioPreferencesWidget" name="audio_preferences">
+      <attribute name="title">
+       <string>Audio</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AudioPreferencesWidget</class>
+   <extends>QWidget</extends>
+   <header>pyfx.widgets.audio_preferences_widget</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

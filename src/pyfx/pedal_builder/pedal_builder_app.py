@@ -6,6 +6,7 @@ from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 
+from pyfx.audio_interface import AudioInterface
 from pyfx.audio_processor import AudioProcessor
 from pyfx.logging import pyfx_log
 from pyfx.pedal_builder.pedal_builder import PedalBuilder
@@ -28,10 +29,12 @@ def pedal_builder_app(pedal_folder: Path):
     app.setStyleSheet(stylesheet)
 
     audio_processor = AudioProcessor()
+    audio_interface = AudioInterface()
     pedal_builder = PedalBuilder(root_pedal_folder=pedal_folder)
     window = PedalBuilderMainWindow(
         pedal_builder=pedal_builder,
         audio_processor=audio_processor,
+        audio_interface=audio_interface,
     )
 
     window.transport_control.audio_file_combobox.setCurrentText("acoustic_melody_17.wav")

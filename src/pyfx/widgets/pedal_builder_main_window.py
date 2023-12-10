@@ -6,6 +6,7 @@ from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 
+from pyfx.audio_interface import AudioInterface
 from pyfx.audio_processor import AudioProcessor
 from pyfx.exceptions import PedalDoesNotExistError
 from pyfx.logging import pyfx_log
@@ -15,6 +16,7 @@ from pyfx.ui.pedal_builder_main_window_ui import Ui_PedalBuilderMainWindow
 from pyfx.widgets.about_widget import AboutWidget
 from pyfx.widgets.open_pedal_dialog import OpenPedalDialog
 from pyfx.widgets.pedal_widget import PedalWidget
+from pyfx.widgets.preferences_widget import PreferencesWidget
 
 
 class VariantReloadWatcher:
@@ -61,7 +63,7 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
 
     audio_assets = Path("src/pyfx/assets/audio")
 
-    def __init__(self, pedal_builder: PedalBuilder, audio_processor: AudioProcessor):
+    def __init__(self, pedal_builder: PedalBuilder, audio_processor: AudioProcessor, audio_interface: AudioInterface):
         """
         Initialize the main window.
 
@@ -71,8 +73,10 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon("src/pyfx/assets/pyfx_logo.png"))
+        self.preferences = PreferencesWidget(audio_interface=audio_interface)
         self.pedal_builder = pedal_builder
         self.audio_processor = audio_processor
+        self.audio_interface = audio_interface
         self.variant_reload_watcher = VariantReloadWatcher(self.reload_pedal)
         self.initialize_pedal_widget()
         self.setup_transport_control()
@@ -151,6 +155,10 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
         pyfx_log.debug("File->Quit pressed")
         self.close()
 
+    def file__preferences_cb(self):
+        pyfx_log.debug("File->Preferences pressed")
+        self.open_preferences()
+
     def new_pedal(self):
         """
         Creates a new pedal and initializes the pedal widget.
@@ -211,6 +219,13 @@ class PedalBuilderMainWindow(QMainWindow, Ui_PedalBuilderMainWindow):
             self.pedal_builder.save_pedal()
         except PedalDoesNotExistError:
             pass
+
+    def open_preferences(self):
+        screen = QApplication.primaryScreen().geometry()
+        x = (screen.width() - self.preferences.width()) // 2
+        y = 50
+        self.preferences.move(x, y)
+        self.preferences.show()
 
     def update_audio_processor(self, variant: PyFxPedalVariant):
         """Update the audio processor to use the pedal variants process audio function"""
